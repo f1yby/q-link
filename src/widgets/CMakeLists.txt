@@ -3,3 +3,4 @@ include(Widget)
 
 add_subdirectory(main_window)
 add_subdirectory(menu)
+add_subdirectory(game)

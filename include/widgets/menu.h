@@ -1,7 +1,6 @@
 #pragma once
 
 #include <QWidget>
-#include <qt6/QtWidgets/qlayoutitem.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -13,9 +12,12 @@ class Menu : public QWidget {
   Q_OBJECT
 
 public:
-  Menu(QWidget *parent = nullptr);
-  ~Menu();
+  explicit Menu(QWidget *parent = nullptr);
+  ~Menu() override;
 
 private:
   Ui::Menu *ui;
+signals:
+  void exitButtonPushed();
+  void startGameButtonPushed();
 };
