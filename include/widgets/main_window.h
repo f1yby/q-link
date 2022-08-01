@@ -1,21 +1,27 @@
 #pragma once
 
-#include <QMainWindow>
+#include "game.h"
 #include "menu.h"
-
+#include <QMainWindow>
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
 QT_END_NAMESPACE
 
-class MainWindow : public QWidget{
-  Q_OBJECT
+class MainWindow : public QWidget {
+    Q_OBJECT
 
 public:
-  MainWindow(QWidget *parent = nullptr);
-  ~MainWindow();
+    explicit MainWindow(QWidget *parent = nullptr);
+    ~MainWindow() override;
+
 
 private:
-  Ui::MainWindow *ui;
+    Ui::MainWindow *ui;
+    Menu *menu;
+    Game *game;
+
+private:
+   void switchWidget(QWidget* widget);
 };
