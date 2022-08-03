@@ -1,4 +1,4 @@
-set(WIDGETS_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/include/widgets")
+set(WIDGETS_INCLUDE_DIR "${LIB_INCLUDE_DIR}/widgets")
 include(Widget)
 
 add_subdirectory(main_window)
