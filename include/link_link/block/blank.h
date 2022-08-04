@@ -12,6 +12,8 @@ public:
     bool manipulatable() override;
     Reactions onManipulated(Op) override;
     void render(QPainter &) override;
+ bool operator==(Block &)override;
+    static Row generate();
   };
 
 }// namespace link_link::block

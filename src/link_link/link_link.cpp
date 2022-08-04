@@ -3,4 +3,14 @@
 //
 
 #include "link_link.h"
-link_link::LinkLink::LinkLink() {}
+using namespace link_link::block;
+link_link::LinkLink::LinkLink()
+    : map(generateBlocks({
+        mapSize[0],
+        mapSize[1],
+      })) {}
+void link_link::LinkLink::render(QPainter &qPainter) {
+  for (auto &i: map) {
+    for (auto &j: i) { j->render(qPainter); }
+  }
+}

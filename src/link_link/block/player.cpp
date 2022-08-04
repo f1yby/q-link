@@ -6,7 +6,6 @@
 using namespace link_link;
 using namespace link_link::block;
 
-
 Reactions Player::onCollided() { return {Reaction::None}; }
 bool Player::manipulatable() { return true; }
 Reactions Player::onManipulated(Op op) { return {Reaction::None}; }

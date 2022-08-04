@@ -7,9 +7,10 @@
 namespace link_link {
 
   enum class Reaction {
-    None,
+
     Delete,
     Select,
+    None,
   };
   typedef std::vector<Reaction> Reactions;
 }// namespace link_link
