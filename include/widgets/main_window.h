@@ -31,5 +31,5 @@ class MainWindow : public QWidget {
 
 
   protected:
-      void keyPressEvent(QKeyEvent *event) override;
+  void keyPressEvent(QKeyEvent *event) override;
 };

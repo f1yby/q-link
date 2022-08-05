@@ -1,10 +1,11 @@
 //
-// Created by jiarui on 8/3/22.
+// Created by jiarui on 8/4/22.
 //
+
 #pragma once
 #include "block_interface.h"
 namespace link_link ::block {
-  class Blank : public Block {
+  class Wall : public Block {
 public:
     [[nodiscard]] Reactions onCollided() const override;
     void render(QPainter &) const override;

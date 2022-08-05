@@ -6,16 +6,13 @@
 namespace link_link ::block {
   class Diamond : public Block {
 public:
-    Reactions onCollided() override;
-    bool manipulatable() override;
-    Reactions onManipulated(Op) override;
-    void render(QPainter &) override;
+    [[nodiscard]] Reactions onCollided() const override;
+    void render(QPainter &) const override;
+    bool operator==(Block &) const override;
     static Row generate();
-
+    [[nodiscard]] bool penetratable()const override;
 
 private:
-
-
     QColor qColor;
     Shape shape;
   };

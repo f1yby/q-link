@@ -4,6 +4,8 @@
 #include "block/type.h"
 #include "block/blank.h"
 #include "block/block_interface.h"
+#include "block/player.h"
+#include "block/wall.h"
 using namespace link_link::block;
 using namespace QColorConstants::Svg;
 const std::map<BlockTypes, Range> link_link::block::blockConstrain{
@@ -49,10 +51,18 @@ Map link_link::block::generateBlocks(Point size) {
   for (auto j = 0; j < size.first; ++j) {
     map.push_back({});
     for (auto i = 0; i < size.second; ++i) {
-      map[j].push_back(std::move(std::unique_ptr<Block>{new Blank()}));
+      map[j].push_back(std::shared_ptr<Block>(new Blank()));
     }
   }
-
-
+  for (auto j = 0; j < size.first; ++j) {
+    for (auto i = 0; i < size.second; ++i) {
+      if (j == 0 || j == size.first - 1) {
+        map[j][i] = std::shared_ptr<Block>(new Wall());
+      } else {
+        map[j][0] = std::shared_ptr<Block>(new Wall());
+        map[j][size.second - 1] = std::shared_ptr<Block>(new Wall());
+      }
+    }
+  }
   return map;
 }

@@ -1,8 +1,8 @@
 #pragma once
 
+#include "../link_link/block/block_interface.h"
 #include "../link_link/block/player.h"
 #include "../link_link/link_link.h"
-#include "../link_link/block/block_interface.h"
 #include <QWidget>
 QT_BEGIN_NAMESPACE
 namespace Ui {

@@ -7,11 +7,10 @@
 namespace link_link::block {
   class Block {
 public:
-    virtual void render(QPainter &) = 0;
-    virtual Reactions onCollided() = 0;
-    virtual bool manipulatable() = 0;
-    virtual Reactions onManipulated(Op) = 0;
-    virtual bool operator==(Block &) = 0;
+    virtual void render(QPainter &) const = 0;
+    [[nodiscard]] virtual Reactions onCollided() const = 0;
+    virtual bool operator==(Block &) const = 0;
+    [[nodiscard]] virtual bool penetratable() const = 0;
   };
 
 }// namespace link_link::block

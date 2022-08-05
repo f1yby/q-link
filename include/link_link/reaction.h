@@ -7,9 +7,13 @@
 namespace link_link {
 
   enum class Reaction {
-
+    MoveLeft,
+    MoveRight,
+    MoveUp,
+    MoveDown,
     Delete,
     Select,
+    Penetrate,
     None,
   };
   typedef std::vector<Reaction> Reactions;

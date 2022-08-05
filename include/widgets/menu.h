@@ -4,20 +4,20 @@
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class Menu;
+  class Menu;
 }
 QT_END_NAMESPACE
 
 class Menu : public QWidget {
   Q_OBJECT
 
-public:
+  public:
   explicit Menu(QWidget *parent = nullptr);
   ~Menu() override;
 
-private:
+  private:
   Ui::Menu *ui;
-signals:
+  signals:
   void exitButtonPushed();
   void startGameButtonPushed();
 };

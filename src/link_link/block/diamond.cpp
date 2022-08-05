@@ -5,11 +5,8 @@
 using namespace link_link;
 using namespace link_link::block;
 
-Reactions Diamond::onCollided() { return {Reaction::None}; }
-bool Diamond::manipulatable() { return true; }
-Reactions Diamond::onManipulated(Op op) { return {Reaction::None}; }
-void Diamond::render(QPainter &) {}
-Row Diamond::generate() {
-
-
-  return {}; }
+Reactions Diamond::onCollided() const { return {}; }
+void Diamond::render(QPainter &) const {}
+Row Diamond::generate() { return {}; }
+bool Diamond::operator==(Block &) const { return false; }
+bool Diamond::penetratable() const { return false; }

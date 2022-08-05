@@ -28,7 +28,4 @@ void MainWindow::switchWidget(QWidget *widget) {
 }
 void MainWindow::switchToGame() { switchWidget(game); }
 void MainWindow::switchToMenu() { switchWidget(menu); }
-void MainWindow::keyPressEvent(QKeyEvent *event) {
-  std::cout << "parent";
-  // game->keyPressEvent(event);
-}
+void MainWindow::keyPressEvent(QKeyEvent *event) { game->keyPressEvent(event); }

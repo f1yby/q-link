@@ -13,13 +13,23 @@ namespace link_link {
   }
 
   class LinkLink {
-    constexpr static const uint16_t mapSize[2] = {5, 5};
+    constexpr static const uint16_t mapSize[2] = {28, 38};
 
 public:
     LinkLink();
-    void render(QPainter& qPainter);
+    void render(QPainter &qPainter);
 
 private:
     block::Map map;
+    block::Players players;
+
+public:
+    void manipulate(Op op);
+
+private:
+    void handleReaction(const Reaction &reaction, block::Point point);
+    void handleCollidedReaction(block::PlayerPointer &colliding,
+                                block::Point &collided,
+                                const Reactions &reactions);
   };
 }// namespace link_link

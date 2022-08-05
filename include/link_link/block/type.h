@@ -11,6 +11,7 @@
 
 namespace link_link::block {
   class Block;
+  class Player;
   enum class BlockTypes {
     Player,
     Blank,
@@ -20,7 +21,11 @@ namespace link_link::block {
   typedef std::pair<int, int> Point;
   typedef std::vector<QPoint> QPoints;
 
-  typedef std::vector<std::unique_ptr<Block>> Row;
+  typedef std::vector<std::shared_ptr<Block>> Row;
+  typedef std::vector<std::shared_ptr<Player>> Players;
+  typedef std::shared_ptr<Player> PlayerPointer;
+  typedef std::shared_ptr<Block> BlockPointer;
+  typedef Row Blocks;
   typedef std::vector<Row> Map;
   extern const std::map<BlockTypes, Range> blockConstrain;
 

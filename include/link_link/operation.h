@@ -3,6 +3,6 @@
 //
 
 #pragma once
-namespace link_link{
+namespace link_link {
   enum class Op { Left, Right, Up, Down, Select };
 }
