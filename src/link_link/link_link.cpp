@@ -77,8 +77,15 @@ void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
         colliding->position = collided;
       } break;
       case Reaction::Select: {
-        auto diamond =
-          dynamic_cast<Diamond *>(map[collided.first][collided.second].get());
+        if (collided != selectedBlock &&
+            map[collided.first][collided.second]->id() ==
+              map[selectedBlock.first][selectedBlock.second]->id()) {
+          map[collided.first][collided.second] = BlockPointer(new Blank());
+          map[selectedBlock.first][selectedBlock.second] =
+            BlockPointer(new Blank());
+        } else {
+          selectedBlock = collided;
+        }
       }
       default:
         break;

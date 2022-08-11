@@ -7,7 +7,7 @@
 //
 #pragma once
 
-#include "block_interface.h"
+#include "block.h"
 
 namespace link_link ::block {
   class Player : public Block {
@@ -15,14 +15,13 @@ public:
     [[nodiscard]] Reactions onCollided() const override;
     [[nodiscard]] Reactions onManipulated(Op) const;
     void render(QPainter &) const override;
-    bool operator==(Block &) const override;
-    [[nodiscard]] bool penetratable() const override;
+    uint64_t id() const override;
 public:
     static Row generate();
 public:
     Point position;
 public:
-    explicit Player(Point position);
+    explicit Player(Point  position);
 
   };
 

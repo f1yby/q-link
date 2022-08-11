@@ -2,6 +2,8 @@
 // Created by jiarui on 8/3/22.
 //
 #include "block/player.h"
+
+#include <utility>
 #include "block/type.h"
 
 using namespace link_link;
@@ -37,7 +39,6 @@ void Player::render(QPainter &qPainter) const {
   };
   qPainter.drawConvexPolygon(&shape[0], shape.size());
 }
-bool Player::operator==(Block &) const { return false; }
 Row Player::generate() { return {}; }
-bool Player::penetratable() const { return false; }
-Player::Player(Point position) : position(position) {}
+Player::Player(Point  position) : position(std::move(position)) {}
+uint64_t Player::id() const { return static_cast<uint64_t>(BlockTypes::Player); }

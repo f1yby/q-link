@@ -15,5 +15,4 @@ void Wall::render(QPainter &qPainter) const {
   qPainter.drawConvexPolygon(&shape[0], shape.size());
 }
 Row Wall::generate() { return {}; }
-bool Wall::operator==(Block &) const { return false; }
-bool Wall::penetratable() const { return false; }
+uint64_t Wall::id() const { return static_cast<uint64_t>(BlockTypes::Wall); }

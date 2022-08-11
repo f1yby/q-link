@@ -3,8 +3,8 @@
 //
 #pragma once
 
+#include "block/block.h"
 #include "block/type.h"
-#include "block/block_interface.h"
 #include <cstdint>
 #include <vector>
 namespace link_link {
@@ -22,6 +22,7 @@ public:
 private:
     block::Map map;
     block::Players players;
+    block::Point selectedBlock;
 
 public:
     void manipulate(Op op);

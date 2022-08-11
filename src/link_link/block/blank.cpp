@@ -8,5 +8,4 @@ using namespace link_link::block;
 Reactions Blank::onCollided() const { return {Reaction::Penetrate}; }
 void Blank::render(QPainter &qPainter) const {}
 Row Blank::generate() { return {}; }
-bool Blank::operator==(Block &) const { return false; }
-bool Blank::penetratable() const { return false; }
+uint64_t Blank::id() const { return static_cast<uint64_t>(BlockTypes::Blank); }

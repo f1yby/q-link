@@ -5,8 +5,18 @@
 using namespace link_link;
 using namespace link_link::block;
 
-Reactions Diamond::onCollided() const { return {}; }
-void Diamond::render(QPainter &) const {}
+Reactions Diamond::onCollided() const { return {Reaction::Select}; }
+void Diamond::render(QPainter &qPainter) const {
+  qPainter.save();
+  qPainter.setPen(Qt::NoPen);
+  qPainter.setBrush(qColor);
+  auto points = shapeMap.find(shape)->second;
+  qPainter.drawConvexPolygon(&points[0], points.size());
+  qPainter.restore();
+}
 Row Diamond::generate() { return {}; }
-bool Diamond::operator==(Block &) const { return false; }
-bool Diamond::penetratable() const { return false; }
+Diamond::Diamond(const QColor &qColor, const Shape &shape)
+    : qColor(qColor), shape(shape) {}
+uint64_t Diamond::id() const {
+  return static_cast<uint64_t>(BlockTypes::Diamond);
+}

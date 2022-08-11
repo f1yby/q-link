@@ -16,6 +16,8 @@ namespace link_link::block {
     Player,
     Blank,
     Diamond,
+    Wall,
+    None,
   };
   typedef std::pair<int, int> Range;
   typedef std::pair<int, int> Point;
