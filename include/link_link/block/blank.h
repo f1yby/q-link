@@ -1,6 +1,3 @@
-//
-// Created by jiarui on 8/3/22.
-//
 #pragma once
 #include "block.h"
 namespace link_link ::block {
@@ -9,6 +6,9 @@ public:
     [[nodiscard]] Reactions onCollided() const override;
     void render(QPainter &) const override;
     [[nodiscard]] uint64_t id() const override;
+    [[nodiscard]] inline bool penetratable() const { return true; };
+
+public:
     static Row generate();
   };
 

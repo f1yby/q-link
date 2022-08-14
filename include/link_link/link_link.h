@@ -23,6 +23,7 @@ private:
     block::Map map;
     block::Players players;
     block::Point selectedBlock;
+    std::vector<block::Point> linkedPath;
 
 public:
     void manipulate(Op op);
@@ -32,5 +33,10 @@ private:
     void handleCollidedReaction(block::PlayerPointer &colliding,
                                 block::Point &collided,
                                 const Reactions &reactions);
+
+private:
+    std::vector<block::Point> genLinkablePath(block::Line);
+    bool checkLinePenetratable(block::Line);
+   std::vector<block::Point> genPenetratableLine(block::Line);
   };
 }// namespace link_link

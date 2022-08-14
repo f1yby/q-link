@@ -14,15 +14,17 @@ namespace link_link ::block {
 public:
     [[nodiscard]] Reactions onCollided() const override;
     [[nodiscard]] Reactions onManipulated(Op) const;
-    void render(QPainter &) const override;
+    [[nodiscard]] inline bool penetratable() const override { return true; };
     uint64_t id() const override;
+    void render(QPainter &) const override;
 public:
     static Row generate();
+
 public:
     Point position;
-public:
-    explicit Player(Point  position);
 
+public:
+    explicit Player(Point position);
   };
 
 }// namespace link_link::block

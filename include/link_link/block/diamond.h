@@ -10,6 +10,8 @@ public:
     void render(QPainter &) const override;
     static Row generate();
     [[nodiscard]] uint64_t id() const override;
+    [[nodiscard]] inline bool penetratable() const override { return false; };
+
 
 private:
     Color color;

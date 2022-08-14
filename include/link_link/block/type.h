@@ -17,11 +17,13 @@ namespace link_link::block {
     Blank,
     Diamond,
     Wall,
+    Path,
     None,
   };
   constexpr uint64_t blockType = static_cast<uint64_t>(BlockType::None);
   typedef std::pair<int, int> Range;
   typedef std::pair<int, int> Point;
+  typedef std::pair<Point, Point> Line;
   typedef std::vector<QPoint> QPoints;
 
   typedef std::vector<std::shared_ptr<Block>> Row;
