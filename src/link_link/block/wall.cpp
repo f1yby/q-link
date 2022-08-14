@@ -15,4 +15,4 @@ void Wall::render(QPainter &qPainter) const {
   qPainter.drawConvexPolygon(&shape[0], shape.size());
 }
 Row Wall::generate() { return {}; }
-uint64_t Wall::id() const { return static_cast<uint64_t>(BlockTypes::Wall); }
+uint64_t Wall::id() const { return static_cast<uint64_t>(BlockType::Wall); }

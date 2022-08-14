@@ -13,7 +13,7 @@ namespace link_link {
   }
 
   class LinkLink {
-    constexpr static const uint16_t mapSize[2] = {28, 38};
+    constexpr static const uint16_t mapSize[2] = {28, 28};
 
 public:
     LinkLink();

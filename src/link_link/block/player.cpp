@@ -3,8 +3,8 @@
 //
 #include "block/player.h"
 
-#include <utility>
 #include "block/type.h"
+#include <utility>
 
 using namespace link_link;
 using namespace link_link::block;
@@ -40,5 +40,5 @@ void Player::render(QPainter &qPainter) const {
   qPainter.drawConvexPolygon(&shape[0], shape.size());
 }
 Row Player::generate() { return {}; }
-Player::Player(Point  position) : position(std::move(position)) {}
-uint64_t Player::id() const { return static_cast<uint64_t>(BlockTypes::Player); }
+Player::Player(Point position) : position(std::move(position)) {}
+uint64_t Player::id() const { return static_cast<uint64_t>(BlockType::Player); }

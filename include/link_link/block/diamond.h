@@ -12,10 +12,11 @@ public:
     [[nodiscard]] uint64_t id() const override;
 
 private:
-    QColor qColor;
+    Color color;
     Shape shape;
+
 public:
-    Diamond(const QColor& qColor,const Shape& shape);
+    Diamond(const Color &color, const Shape &shape);
   };
 
 }// namespace link_link::block

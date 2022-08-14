@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
   connect(menu, &Menu::startGameButtonPushed, this,
           [this]() { switchWidget(game); });
   connect(game, &Game::exitGame, this, [this]() { switchWidget(menu); });
+  switchWidget(menu);
 }
 MainWindow::~MainWindow() {
   delete ui;
@@ -24,8 +25,10 @@ void MainWindow::switchWidget(QWidget *widget) {
   menu->close();
   game->close();
   widget->show();
-  widget->focusWidget();
+  widget->setFocus();
 }
 void MainWindow::switchToGame() { switchWidget(game); }
 void MainWindow::switchToMenu() { switchWidget(menu); }
-void MainWindow::keyPressEvent(QKeyEvent *event) { game->keyPressEvent(event); }
+void MainWindow::keyPressEvent(QKeyEvent *event) { 
+  //game->keyPressEvent(event); 
+}

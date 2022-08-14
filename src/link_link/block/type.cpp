@@ -9,23 +9,23 @@
 #include "diamond.h"
 using namespace link_link::block;
 using namespace QColorConstants::Svg;
-const std::map<BlockTypes, Range> link_link::block::blockConstrain{
+const std::map<BlockType, Range> link_link::block::blockConstrain{
   {
-    BlockTypes::Player,
+    BlockType::Player,
     {
       1,
       1,
     },
   },
   {
-    BlockTypes::Blank,
+    BlockType::Blank,
     {
       0,
       0,
     },
   },
   {
-    BlockTypes::Diamond,
+    BlockType::Diamond,
     {
       0,
       0,
@@ -44,9 +44,38 @@ const std::map<Shape, QPoints> link_link::block::shapeMap{
     },
   },
 };
-const std::vector<QColor> link_link::block::colors = {
-  red, orange, yellow, green, cyan, blue, purple,
+const uint64_t link_link::block::shapes = shapeMap.size();
+const std::map<Color, QColor> link_link::block::colorMap = {
+  {
+    Color::Red,
+    red,
+  },
+  {
+    Color::Orange,
+    orange,
+  },
+  {
+    Color::Yellow,
+    yellow,
+  },
+  {
+    Color::Green,
+    green,
+  },
+  {
+    Color::Blue,
+    blue,
+  },
+  {
+    Color::Cyan,
+    cyan,
+  },
+  {
+    Color::Purple,
+    purple,
+  },
 };
+const uint64_t link_link::block::colors = colorMap.size();
 Map link_link::block::generateBlocks(Point size) {
   Map map;
   for (auto j = 0; j < size.first; ++j) {
@@ -67,7 +96,7 @@ Map link_link::block::generateBlocks(Point size) {
 
   for (auto j = 2; j < size.first - 2; ++j) {
     for (auto i = 2; i < size.second - 2; ++i) {
-      map[j][i] = std::shared_ptr<Block>(new Diamond(cyan, Shape::Square));
+      map[j][i] = std::shared_ptr<Block>(new Diamond(Color::Cyan, Shape::Square));
     }
   }
   return map;

@@ -9,14 +9,17 @@ Reactions Diamond::onCollided() const { return {Reaction::Select}; }
 void Diamond::render(QPainter &qPainter) const {
   qPainter.save();
   qPainter.setPen(Qt::NoPen);
-  qPainter.setBrush(qColor);
+  auto c = colorMap.find(color)->second;
+  qPainter.setBrush(c);
   auto points = shapeMap.find(shape)->second;
   qPainter.drawConvexPolygon(&points[0], points.size());
   qPainter.restore();
 }
 Row Diamond::generate() { return {}; }
-Diamond::Diamond(const QColor &qColor, const Shape &shape)
-    : qColor(qColor), shape(shape) {}
+Diamond::Diamond(const Color &color, const Shape &shape)
+    : color(color), shape(shape) {}
 uint64_t Diamond::id() const {
-  return static_cast<uint64_t>(BlockTypes::Diamond);
+  return static_cast<uint64_t>(BlockType::Diamond) +
+         blockType * (static_cast<uint64_t>(shape) +
+                      shapes * static_cast<uint64_t>(color));
 }
