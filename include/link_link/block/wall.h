@@ -10,7 +10,6 @@ public:
     [[nodiscard]] Reactions onCollided() const override;
     void render(QPainter &) const override;
     [[nodiscard]] uint64_t id() const override;
-    static Row generate();
   };
 
 }// namespace link_link::block

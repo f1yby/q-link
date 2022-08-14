@@ -7,9 +7,11 @@
 #include "block/player.h"
 #include "block/wall.h"
 #include "diamond.h"
+#include <random>
 using namespace link_link::block;
 using namespace QColorConstants::Svg;
-const std::map<BlockType, Range> link_link::block::blockConstrain{
+using namespace std;
+const map<BlockType, Range> link_link::block::blockConstrain{
   {
     BlockType::Player,
     {
@@ -33,7 +35,7 @@ const std::map<BlockType, Range> link_link::block::blockConstrain{
   },
 };
 
-const std::map<Shape, QPoints> link_link::block::shapeMap{
+const map<Shape, QPoints> link_link::block::shapeMap{
   {
     Shape::Square,
     {
@@ -45,7 +47,7 @@ const std::map<Shape, QPoints> link_link::block::shapeMap{
   },
 };
 const uint64_t link_link::block::shapes = shapeMap.size();
-const std::map<Color, QColor> link_link::block::colorMap = {
+const map<Color, QColor> link_link::block::colorMap = {
   {
     Color::Red,
     red,
@@ -93,11 +95,19 @@ Map link_link::block::generateBlocks(Point size) {
       }
     }
   }
-
-  for (auto j = 2; j < size.first - 2; ++j) {
-    for (auto i = 2; i < size.second - 2; ++i) {
-      map[j][i] = std::shared_ptr<Block>(new Diamond(Color::Cyan, Shape::Square));
-    }
+  vector<BlockPointer> weight;
+  uint64_t diamonds = (size.first - 4) * (size.second - 4);
+  weight.reserve(diamonds);
+  for (auto i = 0; i < diamonds; ++++i) {
+    weight.push_back(BlockPointer(new Diamond(static_cast<Color>(i % colors),
+                                              static_cast<Shape>(i % shapes))));
+    weight.push_back(BlockPointer(new Diamond(static_cast<Color>(i % colors),
+                                              static_cast<Shape>(i % shapes))));
+  }
+  random_device rd;
+  shuffle(weight.begin(), weight.end(), default_random_engine(rd()));
+  for (auto j = 2, ii = 0; j < size.first - 2; ++j) {
+    for (auto i = 2; i < size.second - 2; ++i, ++ii) { map[j][i] = weight[ii]; }
   }
   return map;
 }
