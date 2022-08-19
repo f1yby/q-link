@@ -6,18 +6,27 @@
 #include <QTimer>
 #include <iostream>
 #include <qwidget.h>
+#include <string>
 Game::Game(QWidget *parent) : QWidget(parent), ui(new Ui::Game) {
   ui->setupUi(this);
-  auto *timer = new QTimer(this);
-  connect(timer, &QTimer::timeout, this, QOverload<>::of(&Game::update));
-  timer->start(1);
+  auto *renderTimer = new QTimer(this);
+  connect(renderTimer, &QTimer::timeout, this, QOverload<>::of(&Game::update));
+  renderTimer->start(1);
+  auto *secondTimer = new QTimer(this);
+  connect(secondTimer, &QTimer::timeout, this,
+          QOverload<>::of(&Game::elaspe1Second));
+  secondTimer->start(1000);
 }
 
 Game::~Game() { delete ui; }
+
 void Game::paintEvent(QPaintEvent *event) {
   QPainter painter(this);
   gameEngine.render(painter);
+  ui->time->setText(QString::number(gameEngine.getTime()));
 }
+
+void Game::elaspe1Second() { gameEngine.elapse(1); }
 
 void Game::keyPressEvent(QKeyEvent *event) {
   switch (event->key()) {
@@ -39,7 +48,7 @@ void Game::keyPressEvent(QKeyEvent *event) {
       emit exitGame();
       break;
     default:
-      
+
       break;
   }
 }

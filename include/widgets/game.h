@@ -24,6 +24,9 @@ class Game : public QWidget {
   void exitGame();
   void startGame();
 
+  public slots:
+  void elaspe1Second();
+
   protected:
   void paintEvent(QPaintEvent *event) override;
 

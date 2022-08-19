@@ -98,7 +98,7 @@ Map link_link::block::generateBlocks(Point size) {
   vector<BlockPointer> weight;
   uint64_t diamonds = (size.first - 4) * (size.second - 4);
   weight.reserve(diamonds);
-  for (auto i = 0; i < diamonds; ++++i) {
+  for (auto i = 0; i < diamonds; ++ ++i) {
     weight.push_back(BlockPointer(new Diamond(static_cast<Color>(i % colors),
                                               static_cast<Shape>(i % shapes))));
     weight.push_back(BlockPointer(new Diamond(static_cast<Color>(i % colors),

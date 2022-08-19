@@ -3,6 +3,7 @@
 #include "block/diamond.h"
 #include "block/path.h"
 #include "block/player.h"
+#include "link_link.h"
 #include <iostream>
 #include <memory>
 using namespace link_link::block;
@@ -15,7 +16,8 @@ link_link::LinkLink::LinkLink()
         mapSize[0],
         mapSize[1],
       })),
-      players({std::make_shared<Player>(Point{1, 1})}), linkedPath() {}
+      players({std::make_shared<Player>(Point{1, 1})}), linkedPath(),
+      second(100) {}
 void link_link::LinkLink::render(QPainter &qPainter) {
   //Leave Space for border
   qPainter.save();
@@ -40,28 +42,46 @@ void link_link::LinkLink::render(QPainter &qPainter) {
   }
 
   //Draw Diamonds
-  qPainter.save();
-  for (auto &i: map) {
+  {
     qPainter.save();
-    for (auto &j: i) {
-      j->render(qPainter);
-      qPainter.translate(20, 0);
+    for (auto &i: map) {
+      qPainter.save();
+      for (auto &j: i) {
+        j->render(qPainter);
+        qPainter.translate(20, 0);
+      }
+      qPainter.restore();
+      qPainter.translate(0, 20);
     }
     qPainter.restore();
-    qPainter.translate(0, 20);
   }
-  qPainter.restore();
+
+  //Draw Select Mark
+  {
+    qPainter.save();
+    if (selectedBlock != Point{0, 0}) {
+      qPainter.translate(20 * selectedBlock.second, 20 * selectedBlock.first);
+      qPainter.drawLine(QLine(10, 1, 10, 19));
+    }
+
+    qPainter.restore();
+  }
 
   //Restore qPainter
   qPainter.restore();
 }
 void link_link::LinkLink::manipulate(link_link::Op op) {
+  if (isEnd()) { return; }
   for (const auto &player: players) {
     auto reactions = player->onManipulated(op);
     for (auto reaction: reactions) {
       handleReaction(reaction, player->position);
     }
   }
+}
+
+void link_link::LinkLink::elapse(uint32_t second) {
+  if (!isEnd()) { this->second -= second; }
 }
 
 
@@ -106,6 +126,7 @@ void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
             map[collided.first][collided.second] = BlockPointer(new Blank());
             map[selectedBlock.first][selectedBlock.second] =
               BlockPointer(new Blank());
+            selectedBlock = {0, 0};
             break;
           }
         }
@@ -230,3 +251,7 @@ vector<Point> link_link::LinkLink::genPenetratableLine(Line line) {
   }
   return ret;
 }
+
+uint64_t link_link::LinkLink::getTime() { return second; }
+
+bool link_link::LinkLink::isEnd() { return second == 0; }

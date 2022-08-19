@@ -27,6 +27,7 @@ private:
 
 public:
     void manipulate(Op op);
+    void elapse(uint32_t second);
 
 private:
     void handleReaction(const Reaction &reaction, block::Point point);
@@ -37,6 +38,11 @@ private:
 private:
     std::vector<block::Point> genLinkablePath(block::Line);
     bool checkLinePenetratable(block::Line);
-   std::vector<block::Point> genPenetratableLine(block::Line);
+    std::vector<block::Point> genPenetratableLine(block::Line);
+    uint64_t second;
+
+public:
+    uint64_t getTime();
+    bool isEnd();
   };
 }// namespace link_link
