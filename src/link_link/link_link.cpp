@@ -74,9 +74,7 @@ void link_link::LinkLink::manipulate(link_link::Op op) {
   if (isEnd()) { return; }
   for (const auto &player: players) {
     auto reactions = player->onManipulated(op);
-    for (auto reaction: reactions) {
-      handleReaction(reaction, player->position);
-    }
+    for (auto reaction: reactions) { handleReaction(reaction, player); }
   }
 }
 
@@ -86,10 +84,11 @@ void link_link::LinkLink::elapse(uint32_t second) {
 
 
 void link_link::LinkLink::handleReaction(const Reaction &reaction,
-                                         Point point) {
+                                         PlayerPointer player) {
   Reactions collidedReactions;
-  Point colliding = point;
+  Point colliding = player->position;
   Point collided;
+
   switch (reaction) {
     case Reaction::MoveLeft:
       collided = {colliding.first, colliding.second - 1};
@@ -106,7 +105,7 @@ void link_link::LinkLink::handleReaction(const Reaction &reaction,
     default:
       return;
   }
-  handleCollidedReaction(players[0], collided,
+  handleCollidedReaction(player, collided,
                          map[collided.first][collided.second]->onCollided());
 }
 void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
@@ -126,6 +125,7 @@ void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
             map[collided.first][collided.second] = BlockPointer(new Blank());
             map[selectedBlock.first][selectedBlock.second] =
               BlockPointer(new Blank());
+            colliding->score += 1;
             selectedBlock = {0, 0};
             break;
           }
@@ -255,3 +255,5 @@ vector<Point> link_link::LinkLink::genPenetratableLine(Line line) {
 uint64_t link_link::LinkLink::getTime() { return second; }
 
 bool link_link::LinkLink::isEnd() { return second == 0; }
+
+uint64_t link_link::LinkLink::getP1Score() { return players[0]->score; }

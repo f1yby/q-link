@@ -22,6 +22,7 @@ public:
 
 public:
     Point position;
+    uint64_t score;
 
 public:
     explicit Player(Point position);

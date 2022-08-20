@@ -30,7 +30,7 @@ public:
     void elapse(uint32_t second);
 
 private:
-    void handleReaction(const Reaction &reaction, block::Point point);
+    void handleReaction(const Reaction &reaction, block::PlayerPointer point);
     void handleCollidedReaction(block::PlayerPointer &colliding,
                                 block::Point &collided,
                                 const Reactions &reactions);
@@ -43,6 +43,7 @@ private:
 
 public:
     uint64_t getTime();
+    uint64_t getP1Score();
     bool isEnd();
   };
 }// namespace link_link

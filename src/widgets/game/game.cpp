@@ -24,6 +24,7 @@ void Game::paintEvent(QPaintEvent *event) {
   QPainter painter(this);
   gameEngine.render(painter);
   ui->time->setText(QString::number(gameEngine.getTime()));
+  ui->p1Score->setText(QString::number(gameEngine.getP1Score()));
 }
 
 void Game::elaspe1Second() { gameEngine.elapse(1); }

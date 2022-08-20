@@ -40,5 +40,5 @@ void Player::render(QPainter &qPainter) const {
   qPainter.drawConvexPolygon(&shape[0], shape.size());
 }
 Row Player::generate() { return {}; }
-Player::Player(Point position) : position(std::move(position)) {}
+Player::Player(Point position) : position(std::move(position)), score(0) {}
 uint64_t Player::id() const { return static_cast<uint64_t>(BlockType::Player); }
