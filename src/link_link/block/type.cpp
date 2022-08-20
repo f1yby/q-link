@@ -5,12 +5,15 @@
 #include "block/blank.h"
 #include "block/block.h"
 #include "block/player.h"
+#include "block/special.h"
 #include "block/wall.h"
 #include "diamond.h"
 #include <random>
+
 using namespace link_link::block;
 using namespace QColorConstants::Svg;
 using namespace std;
+
 const map<BlockType, Range> link_link::block::blockConstrain{
   {
     BlockType::Player,
@@ -45,8 +48,23 @@ const map<Shape, QPoints> link_link::block::shapeMap{
       {20, 0},
     },
   },
+  {
+    Shape::WordT,
+    {
+      {0, 1},
+      {20, 1},
+      {20, 5},
+      {12, 5},
+      {12, 20},
+      {8, 20},
+      {8, 5},
+      {1, 5},
+    },
+  },
 };
+
 const uint64_t link_link::block::shapes = shapeMap.size();
+
 const map<Color, QColor> link_link::block::colorMap = {
   {
     Color::Red,
@@ -77,7 +95,9 @@ const map<Color, QColor> link_link::block::colorMap = {
     purple,
   },
 };
+
 const uint64_t link_link::block::colors = colorMap.size();
+
 Map link_link::block::generateBlocks(Point size) {
   Map map;
   for (auto j = 0; j < size.first; ++j) {
@@ -98,13 +118,18 @@ Map link_link::block::generateBlocks(Point size) {
   vector<BlockPointer> weight;
   uint64_t diamonds = (size.first - 4) * (size.second - 4);
   weight.reserve(diamonds);
+  for (auto i = 0; i < 6; ++ ++i) {
+    weight.push_back(BlockPointer(new Special(SpecialType::PlusOneSecond)));
+    weight.push_back(BlockPointer(new Special(SpecialType::PlusOneSecond)));
+  }
   for (auto i = 0; i < diamonds; ++ ++i) {
     weight.push_back(BlockPointer(new Diamond(static_cast<Color>(i % colors),
                                               static_cast<Shape>(i % shapes))));
     weight.push_back(BlockPointer(new Diamond(static_cast<Color>(i % colors),
                                               static_cast<Shape>(i % shapes))));
   }
-  random_device rd;
+
+  static random_device rd;
   shuffle(weight.begin(), weight.end(), default_random_engine(rd()));
   for (auto j = 2, ii = 0; j < size.first - 2; ++j) {
     for (auto i = 2; i < size.second - 2; ++i, ++ii) { map[j][i] = weight[ii]; }

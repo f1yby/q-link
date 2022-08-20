@@ -3,23 +3,24 @@
 #include "block.h"
 
 namespace link_link ::block {
-  class Player : public Block {
+
+  class Special : public Block {
+public:
+
+
+
 public:
     [[nodiscard]] Reactions onCollided() const override;
     [[nodiscard]] Reactions onManipulated(Op) const;
     [[nodiscard]] inline bool penetratable() const override { return true; };
     uint64_t id() const override;
-    void render(QPainter &) const override;
+    void render(QPainter &qPainter) const override;
+
+private:
+    SpecialType type;
 
 public:
-    static Row generate();
-
-public:
-    Point position;
-    uint64_t score;
-
-public:
-    explicit Player(Point position);
+    explicit Special(SpecialType type);
   };
 
 }// namespace link_link::block

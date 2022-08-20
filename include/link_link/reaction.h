@@ -14,6 +14,8 @@ namespace link_link {
     Delete,
     Select,
     Penetrate,
+    ReplaceWithBlank,
+    PlusOneSecond,
     None,
   };
   typedef std::vector<Reaction> Reactions;

@@ -12,6 +12,7 @@
 namespace link_link::block {
   class Block;
   class Player;
+
   enum class BlockType {
     Player,
     Blank,
@@ -38,6 +39,7 @@ namespace link_link::block {
     Square,
     Triangle,
     Circle,
+    WordT
   };
   extern const std::map<Shape, QPoints> shapeMap;
   extern const uint64_t shapes;
@@ -55,5 +57,8 @@ namespace link_link::block {
 
   Map generateBlocks(Point size);
 
+  enum class SpecialType {
+    PlusOneSecond,
+  };
 
 }// namespace link_link::block

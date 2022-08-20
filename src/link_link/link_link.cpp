@@ -133,6 +133,12 @@ void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
         selectedBlock = collided;
         break;
       }
+      case Reaction::ReplaceWithBlank:
+        map[collided.first][collided.second] = BlockPointer(new Blank());
+        break;
+      case Reaction::PlusOneSecond:
+        second += 30;
+        break;
       default:
         break;
     }
