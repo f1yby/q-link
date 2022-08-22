@@ -19,6 +19,7 @@ namespace link_link::block {
     Diamond,
     Wall,
     Path,
+    Special,
     None,
   };
   constexpr uint64_t blockType = static_cast<uint64_t>(BlockType::None);
@@ -39,7 +40,8 @@ namespace link_link::block {
     Square,
     Triangle,
     Circle,
-    WordT
+    WordT,
+    WordS,
   };
   extern const std::map<Shape, QPoints> shapeMap;
   extern const uint64_t shapes;
@@ -59,6 +61,7 @@ namespace link_link::block {
 
   enum class SpecialType {
     PlusOneSecond,
+    Shuffle
   };
 
 }// namespace link_link::block

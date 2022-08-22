@@ -16,6 +16,7 @@ namespace link_link {
     Penetrate,
     ReplaceWithBlank,
     PlusOneSecond,
+    Shuffle,
     None,
   };
   typedef std::vector<Reaction> Reactions;

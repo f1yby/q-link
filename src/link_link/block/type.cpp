@@ -61,9 +61,22 @@ const map<Shape, QPoints> link_link::block::shapeMap{
       {1, 5},
     },
   },
+  {
+    Shape::WordS,
+    {
+      {10, 1},
+      {14, 5},
+      {10, 9},
+      {14, 13},
+      {10, 19},
+      {6, 15},
+      {10, 11},
+      {6, 7},
+    },
+  },
 };
 
-const uint64_t link_link::block::shapes = shapeMap.size();
+const uint64_t link_link::block::shapes = 1;//shapeMap.size();
 
 const map<Color, QColor> link_link::block::colorMap = {
   {
@@ -120,7 +133,7 @@ Map link_link::block::generateBlocks(Point size) {
   weight.reserve(diamonds);
   for (auto i = 0; i < 6; ++ ++i) {
     weight.push_back(BlockPointer(new Special(SpecialType::PlusOneSecond)));
-    weight.push_back(BlockPointer(new Special(SpecialType::PlusOneSecond)));
+    weight.push_back(BlockPointer(new Special(SpecialType::Shuffle)));
   }
   for (auto i = 0; i < diamonds; ++ ++i) {
     weight.push_back(BlockPointer(new Diamond(static_cast<Color>(i % colors),

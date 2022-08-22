@@ -6,6 +6,7 @@
 #include "link_link.h"
 #include <iostream>
 #include <memory>
+#include <random>
 using namespace link_link::block;
 using namespace link_link;
 using namespace std;
@@ -139,6 +140,24 @@ void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
       case Reaction::PlusOneSecond:
         second += 30;
         break;
+      case Reaction::Shuffle: {
+        for (auto &i: players) { i->position = {1, 1}; }
+        auto size = Point(map.size(), map[0].size());
+        Row weight;
+        for (auto j = 2, ii = 0; j < size.first - 2; ++j) {
+          for (auto i = 2; i < size.second - 2; ++i, ++ii) {
+            weight.push_back(map[j][i]);
+          }
+        }
+        static random_device rd;
+        shuffle(weight.begin(), weight.end(), default_random_engine(rd()));
+        for (auto j = 2, ii = 0; j < size.first - 2; ++j) {
+          for (auto i = 2; i < size.second - 2; ++i, ++ii) {
+            map[j][i] = weight[ii];
+          }
+        }
+        linkedPath.clear();
+      }
       default:
         break;
     }
