@@ -22,7 +22,6 @@ class Game : public QWidget {
 
   signals:
   void exitGame();
-  void startGame();
 
   public slots:
   void elaspe1Second();

@@ -18,7 +18,7 @@ link_link::LinkLink::LinkLink()
         mapSize[1],
       })),
       players({std::make_shared<Player>(Point{1, 1})}), linkedPath(),
-      second(100) {}
+      gameTime(100), hintTime(0) {}
 void link_link::LinkLink::render(QPainter &qPainter) {
   //Leave Space for border
   qPainter.save();
@@ -67,12 +67,25 @@ void link_link::LinkLink::render(QPainter &qPainter) {
 
     qPainter.restore();
   }
+  {
+
+    if (!isHintEnd()) {
+      for (const auto &i: hintedPoints) {
+        qPainter.save();
+        qPainter.translate(20 * i.second, 20 * i.first);
+        qPainter.drawLine(QLine(1, 1, 19, 19));
+        qPainter.drawLine(QLine(1, 19, 19, 1));
+        qPainter.restore();
+      }
+    }
+  }
+
 
   //Restore qPainter
   qPainter.restore();
 }
 void link_link::LinkLink::manipulate(link_link::Op op) {
-  if (isEnd()) { return; }
+  if (isGameEnd()) { return; }
   for (const auto &player: players) {
     auto reactions = player->onManipulated(op);
     for (auto reaction: reactions) { handleReaction(reaction, player); }
@@ -80,7 +93,8 @@ void link_link::LinkLink::manipulate(link_link::Op op) {
 }
 
 void link_link::LinkLink::elapse(uint32_t second) {
-  if (!isEnd()) { this->second -= second; }
+  if (!isGameEnd()) { this->gameTime -= second; }
+  if (!isHintEnd()) { this->hintTime -= second; }
 }
 
 
@@ -111,7 +125,7 @@ void link_link::LinkLink::handleReaction(const Reaction &reaction,
 }
 void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
                                       const Reactions &reactions) {
-  for (auto i: reactions) {
+  for (const auto &i: reactions) {
     switch (i) {
       case Reaction::Penetrate:
         colliding->position = collided;
@@ -123,10 +137,12 @@ void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
           auto path = genLinkablePath({selectedBlock, collided});
           if (!path.empty()) {
             linkedPath = path;
-            map[collided.first][collided.second] = BlockPointer(new Blank());
+            map[collided.first][collided.second] =
+              BlockPointer(make_shared<Blank>());
             map[selectedBlock.first][selectedBlock.second] =
-              BlockPointer(new Blank());
+              BlockPointer(make_shared<Blank>());
             colliding->score += 1;
+            if (!isHintEnd()) { hintedPoints = findLinkedPair(); }
             selectedBlock = {0, 0};
             break;
           }
@@ -135,10 +151,11 @@ void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
         break;
       }
       case Reaction::ReplaceWithBlank:
-        map[collided.first][collided.second] = BlockPointer(new Blank());
+        map[collided.first][collided.second] =
+          BlockPointer(make_shared<Blank>());
         break;
       case Reaction::PlusOneSecond:
-        second += 30;
+        gameTime += 30;
         break;
       case Reaction::Shuffle: {
         for (auto &i: players) { i->position = {1, 1}; }
@@ -158,6 +175,10 @@ void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
         }
         linkedPath.clear();
       }
+      case Reaction::Hint: {
+        hintedPoints = findLinkedPair();
+        hintTime = 10;
+      }
       default:
         break;
     }
@@ -165,7 +186,7 @@ void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
 }
 
 
-vector<Point> link_link::LinkLink::genLinkablePath(Line line) {
+Points link_link::LinkLink::genLinkablePath(Line line) {
 
   auto first = line.first;
   auto second = line.second;
@@ -192,7 +213,7 @@ vector<Point> link_link::LinkLink::genLinkablePath(Line line) {
       valid = false;
     }
     if (!valid) { continue; }
-    auto ret = vector<Point>();
+    auto ret = Points();
     for (const auto &line: lines) {
       auto penetratableLine = genPenetratableLine(line);
       ret.insert(ret.end(), penetratableLine.begin(), penetratableLine.end());
@@ -253,7 +274,8 @@ bool link_link::LinkLink::checkLinePenetratable(Line line) {
   }
   return true;
 }
-vector<Point> link_link::LinkLink::genPenetratableLine(Line line) {
+
+Points link_link::LinkLink::genPenetratableLine(Line line) {
   auto first = line.first;
   auto second = line.second;
   int *variable = nullptr;
@@ -277,8 +299,100 @@ vector<Point> link_link::LinkLink::genPenetratableLine(Line line) {
   return ret;
 }
 
-uint64_t link_link::LinkLink::getTime() { return second; }
+uint64_t link_link::LinkLink::getGameTime() { return gameTime; }
 
-bool link_link::LinkLink::isEnd() { return second == 0; }
+bool link_link::LinkLink::isGameEnd() { return gameTime == 0; }
+
+bool link_link::LinkLink::isHintEnd() { return hintTime == 0; }
 
 uint64_t link_link::LinkLink::getP1Score() { return players[0]->score; }
+static inline bool isDiamond(uint64_t id) {
+  if (id % blockType == static_cast<uint64_t>(BlockType::Diamond)) {
+    return true;
+  }
+  return false;
+}
+block::Points link_link::LinkLink::findLinkedPair() {
+
+  // From left to right
+  for (auto i = 0; i < map.size(); ++i) {
+    for (auto j = 0; j < map[0].size(); ++j) {
+      if (map[i][j]->id() != static_cast<uint64_t>(BlockType::Blank)) {
+        continue;
+      }
+      std::map<uint64_t, Point> points;
+      auto id = map[i][j - 1]->id();
+      if (isDiamond(id)) { points.insert({id, {i, j - 1}}); }
+
+      auto k = j;
+      for (; map[i][k]->id() == static_cast<uint64_t>(BlockType::Blank); ++k) {
+        auto c = i;
+        // Go up
+        {
+          for (; map[c][k]->id() == static_cast<uint64_t>(BlockType::Blank);
+               --c) {}
+          auto id = map[c][k]->id();
+          auto iter = points.find(id);
+          if (iter != points.end()) { return {iter->second, {c, k}}; }
+          if (isDiamond(id)) { points.insert({id, {c, k}}); }
+        }
+        // Go down
+        {
+          for (c = i;
+               map[c][k]->id() == static_cast<uint64_t>(BlockType::Blank);
+               ++c) {}
+          auto id = map[c][k]->id();
+          auto iter = points.find(id);
+          if (iter != points.end()) { return {iter->second, {c, k}}; }
+          if (isDiamond(id)) { points.insert({id, {c, k}}); }
+        }
+      }
+      id = map[i][k]->id();
+      auto iter = points.find(id);
+      if (iter != points.end()) { return {iter->second, {i, k}}; }
+      j = k;
+    }
+  }
+
+  //From up to down
+  for (auto j = 0; j < map[0].size();) {
+    for (auto i = 0; i < map.size(); ++i) {
+      if (map[i][j]->id() != static_cast<uint64_t>(BlockType::Blank)) {
+        continue;
+      }
+      std::map<uint64_t, Point> points;
+      points.insert({map[i - 1][j]->id(), {i - 1, j}});
+      auto k = i;
+      for (; map[k][j]->id() == static_cast<uint64_t>(BlockType::Blank); ++k) {
+        auto c = i;
+        // Go left
+        {
+          for (; map[k][c]->id() == static_cast<uint64_t>(BlockType::Blank);
+               --c) {}
+          auto id = map[k][c]->id();
+          auto iter = points.find(id);
+          if (iter != points.end()) { return {iter->second, {k, c}}; }
+          if (isDiamond(id)) { points.insert({id, {k, c}}); }
+        }
+
+        // Go right
+        {
+          for (c = i;
+               map[k][c]->id() == static_cast<uint64_t>(BlockType::Blank);
+               ++c) {}
+          auto id = map[k][c]->id();
+          auto iter = points.find(id);
+          if (iter != points.end()) { return {iter->second, {k, c}}; }
+          if (isDiamond(id)) { points.insert({id, {k, c}}); }
+        }
+      }
+      auto id = map[k][j]->id();
+      auto iter = points.find(id);
+      if (iter != points.end()) { return {iter->second, {k, j}}; }
+      i = k;
+    }
+  }
+
+
+  return {};
+}

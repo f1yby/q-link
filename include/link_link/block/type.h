@@ -25,6 +25,7 @@ namespace link_link::block {
   constexpr uint64_t blockType = static_cast<uint64_t>(BlockType::None);
   typedef std::pair<int, int> Range;
   typedef std::pair<int, int> Point;
+  typedef std::vector<Point> Points;
   typedef std::pair<Point, Point> Line;
   typedef std::vector<QPoint> QPoints;
 
@@ -36,13 +37,7 @@ namespace link_link::block {
   typedef std::vector<Row> Map;
   extern const std::map<BlockType, Range> blockConstrain;
 
-  enum class Shape {
-    Square,
-    Triangle,
-    Circle,
-    WordT,
-    WordS,
-  };
+  enum class Shape { Square, Triangle, Circle, WordT, WordS, WordH };
   extern const std::map<Shape, QPoints> shapeMap;
   extern const uint64_t shapes;
   enum class Color {
@@ -61,7 +56,8 @@ namespace link_link::block {
 
   enum class SpecialType {
     PlusOneSecond,
-    Shuffle
+    Shuffle,
+    Hint,
   };
 
 }// namespace link_link::block

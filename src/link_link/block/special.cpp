@@ -19,6 +19,12 @@ Reactions link_link::block::Special::onCollided() const {
         Reaction::ReplaceWithBlank,
         Reaction::Shuffle,
       };
+    case link_link::block::SpecialType::Hint:
+      return {
+        Reaction::Penetrate,
+        Reaction::ReplaceWithBlank,
+        Reaction::Hint,
+      };
     default:
       break;
   }
@@ -37,6 +43,9 @@ void link_link::block::Special::render(QPainter &qPainter) const {
       break;
     case link_link::block::SpecialType::Shuffle:
       shape = Shape::WordS;
+      break;
+    case link_link::block::SpecialType::Hint:
+      shape = Shape::WordH;
       break;
     default:
       break;

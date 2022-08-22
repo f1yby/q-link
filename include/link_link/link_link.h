@@ -6,7 +6,6 @@
 #include "block/block.h"
 #include "block/type.h"
 #include <cstdint>
-#include <vector>
 namespace link_link {
   namespace block {
     class Block;
@@ -23,7 +22,8 @@ private:
     block::Map map;
     block::Players players;
     block::Point selectedBlock;
-    std::vector<block::Point> linkedPath;
+    block::Points linkedPath;
+    block::Points hintedPoints;
 
 public:
     void manipulate(Op op);
@@ -36,14 +36,17 @@ private:
                                 const Reactions &reactions);
 
 private:
-    std::vector<block::Point> genLinkablePath(block::Line);
+    block::Points genLinkablePath(block::Line);
     bool checkLinePenetratable(block::Line);
-    std::vector<block::Point> genPenetratableLine(block::Line);
-    uint64_t second;
+    block::Points genPenetratableLine(block::Line);
+    block::Points findLinkedPair();
+    uint64_t gameTime;
+    uint64_t hintTime;
 
 public:
-    uint64_t getTime();
+    uint64_t getGameTime();
     uint64_t getP1Score();
-    bool isEnd();
+    bool isGameEnd();
+    bool isHintEnd();
   };
 }// namespace link_link

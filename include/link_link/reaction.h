@@ -1,7 +1,3 @@
-//
-// Created by jiarui on 8/2/22.
-//
-
 #pragma once
 #include <vector>
 namespace link_link {
@@ -17,6 +13,7 @@ namespace link_link {
     ReplaceWithBlank,
     PlusOneSecond,
     Shuffle,
+    Hint,
     None,
   };
   typedef std::vector<Reaction> Reactions;
