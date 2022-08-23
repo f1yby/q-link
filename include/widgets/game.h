@@ -28,12 +28,23 @@ class Game : public QWidget {
 
   protected:
   void paintEvent(QPaintEvent *event) override;
+      void renderEndLayout();
+      void renderPausedLayout();
+      void renderNormalLayout();
 
   public:
   void keyPressEvent(QKeyEvent *event) override;
   void mousePressEvent(QMouseEvent *event) override;
 
+  public:
+  enum GameStatus {
+    Normal,
+    Paused,
+    End,
+  };
+
   private:
   //      link_link::block::Player player;
+  GameStatus status;
   link_link::LinkLink gameEngine;
 };

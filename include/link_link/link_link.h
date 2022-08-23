@@ -35,18 +35,23 @@ private:
                                 const Reactions &reactions);
 
 private:
-    block::Points genLinkablePath(block::Line);
-    bool checkLinePenetratable(block::Line);
-    block::Points genPenetratableLine(block::Line);
-    block::Points findLinkedPair();
+    block::Points genLinkablePath(block::Line) const;
+    bool checkLinePenetratable(block::Line) const;
+    block::Points genPenetratableLine(block::Line)const;
+    block::Points findLinkedPair()const;
     uint64_t gameTime;
     uint64_t hintTime;
+    bool isHintEnd() const;
+
+    bool paused;
+    bool isPaused() const;
 
 public:
-    uint64_t getGameTime();
-    uint64_t getP1Score();
-    uint64_t getP2Score();
-    bool isGameEnd();
-    bool isHintEnd();
+    uint64_t getGameTime() const;
+    uint64_t getP1Score() const;
+    uint64_t getP2Score() const;
+
+    bool isGameEnd() const;
+    void togglePaused();
   };
 }// namespace link_link

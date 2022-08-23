@@ -22,12 +22,13 @@ link_link::LinkLink::LinkLink(GameMode gameMode)
       players({
         make_shared<Player>(Point{1, 1}, PlayerType::Player1, Point{0, 0}),
       }),
-      linkedPath(), gameTime(100), hintTime(0) {
+      linkedPath(), gameTime(100), hintTime(0), paused(false) {
   if (gameMode == GameMode::Contest) {
     players.push_back(
       make_shared<Player>(Point{1, 1}, PlayerType::Player2, Point{0, 0}));
   }
 }
+
 void link_link::LinkLink::render(QPainter &qPainter) {
   //Leave Space for border
   qPainter.save();
@@ -97,6 +98,7 @@ void link_link::LinkLink::render(QPainter &qPainter) {
   //Restore qPainter
   qPainter.restore();
 }
+
 void link_link::LinkLink::manipulate(Key key) {
   if (isGameEnd()) { return; }
   for (const auto &player: players) {
@@ -106,7 +108,9 @@ void link_link::LinkLink::manipulate(Key key) {
 }
 
 void link_link::LinkLink::elapse(uint32_t second) {
-  if (!isGameEnd()) { this->gameTime -= second; }
+  if (isGameEnd() || isPaused()) { return; }
+
+  this->gameTime -= second;
   if (!isHintEnd()) { this->hintTime -= second; }
 }
 
@@ -138,6 +142,7 @@ void link_link::LinkLink::handleReaction(const Reaction &reaction,
   handleCollidedReaction(player, collided,
                          map[collided.first][collided.second]->onCollided());
 }
+
 void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
                                       const Reactions &reactions) {
   for (const auto &i: reactions) {
@@ -202,7 +207,7 @@ void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
 }
 
 
-Points link_link::LinkLink::genLinkablePath(Line line) {
+Points link_link::LinkLink::genLinkablePath(Line line) const {
 
   auto first = line.first;
   auto second = line.second;
@@ -263,7 +268,7 @@ Points link_link::LinkLink::genLinkablePath(Line line) {
   }
   return {};
 }
-bool link_link::LinkLink::checkLinePenetratable(Line line) {
+bool link_link::LinkLink::checkLinePenetratable(Line line) const {
 
   int *variable = nullptr;
   auto first = line.first;
@@ -297,7 +302,7 @@ bool link_link::LinkLink::checkLinePenetratable(Line line) {
   return true;
 }
 
-Points link_link::LinkLink::genPenetratableLine(Line line) {
+Points link_link::LinkLink::genPenetratableLine(Line line) const {
   auto first = line.first;
   auto second = line.second;
   int *variable = nullptr;
@@ -321,15 +326,15 @@ Points link_link::LinkLink::genPenetratableLine(Line line) {
   return ret;
 }
 
-uint64_t link_link::LinkLink::getGameTime() { return gameTime; }
+uint64_t link_link::LinkLink::getGameTime() const { return gameTime; }
 
-bool link_link::LinkLink::isGameEnd() { return gameTime == 0; }
+bool link_link::LinkLink::isGameEnd() const { return gameTime == 0; }
 
-bool link_link::LinkLink::isHintEnd() { return hintTime == 0; }
+bool link_link::LinkLink::isHintEnd() const { return hintTime == 0; }
 
-uint64_t link_link::LinkLink::getP1Score() { return players[0]->score; }
+uint64_t link_link::LinkLink::getP1Score() const { return players[0]->score; }
 
-uint64_t link_link::LinkLink::getP2Score() { return players[1]->score; }
+uint64_t link_link::LinkLink::getP2Score() const { return players[1]->score; }
 
 static inline bool isDiamond(uint64_t id) {
   if (id % blockType == static_cast<uint64_t>(BlockType::Diamond)) {
@@ -337,7 +342,8 @@ static inline bool isDiamond(uint64_t id) {
   }
   return false;
 }
-block::Points link_link::LinkLink::findLinkedPair() {
+
+Points link_link::LinkLink::findLinkedPair() const {
 
   // From left to right
   for (auto i = 0; i < map.size(); ++i) {
@@ -421,3 +427,7 @@ block::Points link_link::LinkLink::findLinkedPair() {
 
   return {};
 }
+
+bool link_link::LinkLink::isPaused() const { return paused; }
+
+void link_link::LinkLink::togglePaused() { paused = !isPaused(); };
