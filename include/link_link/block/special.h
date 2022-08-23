@@ -11,7 +11,6 @@ public:
 
 public:
     [[nodiscard]] Reactions onCollided() const override;
-    [[nodiscard]] Reactions onManipulated(Op) const;
     [[nodiscard]] inline bool penetratable() const override { return true; };
     uint64_t id() const override;
     void render(QPainter &qPainter) const override;

@@ -6,10 +6,13 @@ namespace link_link ::block {
   class Player : public Block {
 public:
     [[nodiscard]] Reactions onCollided() const override;
-    [[nodiscard]] Reactions onManipulated(Op) const;
     [[nodiscard]] inline bool penetratable() const override { return true; };
     uint64_t id() const override;
     void render(QPainter &) const override;
+
+public:
+    [[nodiscard]] Reactions onManipulated(Qt::Key) const;
+    void renderSelectedMark(QPainter&) const;
 
 public:
     static Row generate();
@@ -17,9 +20,13 @@ public:
 public:
     Point position;
     uint64_t score;
+    Point selectedPoint;
 
 public:
-    explicit Player(Point position);
+    explicit Player(Point position, PlayerType player, Point selectedPoint);
+
+private:
+    PlayerType player;
   };
 
 }// namespace link_link::block

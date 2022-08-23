@@ -30,8 +30,6 @@ Reactions link_link::block::Special::onCollided() const {
   }
 }
 
-Reactions link_link::block::Special::onManipulated(Op) const { return {}; }
-
 uint64_t link_link::block::Special::id() const { return uint64_t(); }
 
 void link_link::block::Special::render(QPainter &qPainter) const {

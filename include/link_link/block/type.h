@@ -2,7 +2,6 @@
 // Created by jiarui on 8/3/22.
 //
 #pragma once
-#include "../operation.h"
 #include "../reaction.h"
 #include "qpainter.h"
 #include "qpoint.h"
@@ -58,6 +57,15 @@ namespace link_link::block {
     PlusOneSecond,
     Shuffle,
     Hint,
+  };
+
+  enum class PlayerType {
+    Player1,
+    Player2,
+  };
+  enum class GameMode {
+    Single,
+    Contest,
   };
 
 }// namespace link_link::block

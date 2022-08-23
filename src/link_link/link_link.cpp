@@ -12,36 +12,26 @@ using namespace link_link::block;
 using namespace link_link;
 using namespace std;
 using namespace spdlog;
+using namespace Qt;
 
-link_link::LinkLink::LinkLink()
+link_link::LinkLink::LinkLink(GameMode gameMode)
     : map(generateBlocks({
         mapSize[0],
         mapSize[1],
       })),
-      players({std::make_shared<Player>(Point{1, 1})}), linkedPath(),
-      gameTime(100), hintTime(0) {}
+      players({
+        make_shared<Player>(Point{1, 1}, PlayerType::Player1, Point{0, 0}),
+      }),
+      linkedPath(), gameTime(100), hintTime(0) {
+  if (gameMode == GameMode::Contest) {
+    players.push_back(
+      make_shared<Player>(Point{1, 1}, PlayerType::Player2, Point{0, 0}));
+  }
+}
 void link_link::LinkLink::render(QPainter &qPainter) {
   //Leave Space for border
   qPainter.save();
   qPainter.translate(1, 1);
-
-  //Draw Players
-  {
-    qPainter.save();
-    auto position = players.front()->position;
-    qPainter.translate(20 * position.second, 20 * position.first);
-    players.front()->render(qPainter);
-    qPainter.restore();
-  }
-
-
-  //Draw Paths
-  for (const auto &i: linkedPath) {
-    qPainter.save();
-    qPainter.translate(20 * i.second, 20 * i.first);
-    Path().render(qPainter);
-    qPainter.restore();
-  }
 
   //Draw Diamonds
   {
@@ -58,16 +48,38 @@ void link_link::LinkLink::render(QPainter &qPainter) {
     qPainter.restore();
   }
 
-  //Draw Select Mark
+  //Draw Players
   {
-    qPainter.save();
-    if (selectedBlock != Point{0, 0}) {
-      qPainter.translate(20 * selectedBlock.second, 20 * selectedBlock.first);
-      qPainter.drawLine(QLine(10, 1, 10, 19));
-    }
 
+    for (const auto &player: players) {
+
+      qPainter.save();
+      auto position = player->position;
+      qPainter.translate(20 * position.second, 20 * position.first);
+      player->render(qPainter);
+      qPainter.restore();
+
+      //Draw Select Mark
+      qPainter.save();
+      auto selectedBlock = player->selectedPoint;
+      if (selectedBlock != Point{0, 0}) {
+        qPainter.translate(20 * selectedBlock.second, 20 * selectedBlock.first);
+        player->renderSelectedMark(qPainter);
+      }
+      qPainter.restore();
+    }
+  }
+
+
+  //Draw Paths
+  for (const auto &i: linkedPath) {
+    qPainter.save();
+    qPainter.translate(20 * i.second, 20 * i.first);
+    Path().render(qPainter);
     qPainter.restore();
   }
+
+
   {
 
     if (!isHintEnd()) {
@@ -85,10 +97,10 @@ void link_link::LinkLink::render(QPainter &qPainter) {
   //Restore qPainter
   qPainter.restore();
 }
-void link_link::LinkLink::manipulate(link_link::Op op) {
+void link_link::LinkLink::manipulate(Key key) {
   if (isGameEnd()) { return; }
   for (const auto &player: players) {
-    auto reactions = player->onManipulated(op);
+    auto reactions = player->onManipulated(key);
     for (auto reaction: reactions) { handleReaction(reaction, player); }
   }
 }
@@ -134,6 +146,7 @@ void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
         colliding->position = collided;
         break;
       case Reaction::Select: {
+        auto &selectedBlock = colliding->selectedPoint;
         if (collided != selectedBlock &&
             map[collided.first][collided.second]->id() ==
               map[selectedBlock.first][selectedBlock.second]->id()) {
@@ -315,6 +328,9 @@ bool link_link::LinkLink::isGameEnd() { return gameTime == 0; }
 bool link_link::LinkLink::isHintEnd() { return hintTime == 0; }
 
 uint64_t link_link::LinkLink::getP1Score() { return players[0]->score; }
+
+uint64_t link_link::LinkLink::getP2Score() { return players[1]->score; }
+
 static inline bool isDiamond(uint64_t id) {
   if (id % blockType == static_cast<uint64_t>(BlockType::Diamond)) {
     return true;

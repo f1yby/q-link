@@ -15,18 +15,17 @@ namespace link_link {
     constexpr static const uint16_t mapSize[2] = {28, 28};
 
 public:
-    LinkLink();
+    LinkLink(block::GameMode gameMode);
     void render(QPainter &qPainter);
 
 private:
     block::Map map;
     block::Players players;
-    block::Point selectedBlock;
     block::Points linkedPath;
     block::Points hintedPoints;
 
 public:
-    void manipulate(Op op);
+    void manipulate(Qt::Key key);
     void elapse(uint32_t second);
 
 private:
@@ -46,6 +45,7 @@ private:
 public:
     uint64_t getGameTime();
     uint64_t getP1Score();
+    uint64_t getP2Score();
     bool isGameEnd();
     bool isHintEnd();
   };
