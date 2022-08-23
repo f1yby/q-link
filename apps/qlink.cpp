@@ -3,12 +3,15 @@
 #include <QPushButton>
 #include <QTranslator>
 #include <qpushbutton.h>
-
+#include <spdlog/spdlog.h>
 #include "widgets/main_window.h"
 #include "widgets/menu.h"
 
+using namespace spdlog;
+
 int main(int argc, char *argv[]) {
-  QApplication a(argc, argv);
+  info("Enter QApp");
+  QApplication q(argc, argv);
 
   QTranslator translator;
   const QStringList uiLanguages = QLocale::system().uiLanguages();
@@ -19,6 +22,7 @@ int main(int argc, char *argv[]) {
       break;
     }
   }
+  info("Enter MainWindow");
   MainWindow m;
   m.show();
 

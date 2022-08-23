@@ -7,10 +7,11 @@
 #include <iostream>
 #include <memory>
 #include <random>
+#include <spdlog/spdlog.h>
 using namespace link_link::block;
 using namespace link_link;
 using namespace std;
-
+using namespace spdlog;
 
 link_link::LinkLink::LinkLink()
     : map(generateBlocks({
@@ -120,6 +121,8 @@ void link_link::LinkLink::handleReaction(const Reaction &reaction,
     default:
       return;
   }
+  info("Collision: ({}, {}) with ({}, {})", colliding.first, colliding.second,
+       collided.first, collided.second);
   handleCollidedReaction(player, collided,
                          map[collided.first][collided.second]->onCollided());
 }
@@ -268,10 +271,16 @@ bool link_link::LinkLink::checkLinePenetratable(Line line) {
 
   for (*variable = mm.first + 1; *variable < mm.second; ++*variable) {
     if (!map[i][j]->penetratable()) {
-      cout << "Col: " << j << " Row: " << i << " Inpenetratable" << endl;
+      info("Penetration: Line (({}, {}), ({}, {})) is inpenetratbale, because "
+           "({}, {}) is inpenetratable",
+           line.first.first, line.first.second, line.second.first,
+           line.second.second, i, j);
       return false;
     }
   }
+  info("Penetration: Line (({}, {}), ({}, {})) is penetratbale",
+       line.first.first, line.first.second, line.second.first,
+       line.second.second);
   return true;
 }
 

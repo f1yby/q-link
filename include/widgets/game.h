@@ -31,6 +31,7 @@ class Game : public QWidget {
 
   public:
   void keyPressEvent(QKeyEvent *event) override;
+  void mousePressEvent(QMouseEvent *event) override;
 
   private:
   //      link_link::block::Player player;

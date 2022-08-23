@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <iostream>
 #include <qwidget.h>
+#include <spdlog/spdlog.h>
 #include <string>
 Game::Game(QWidget *parent) : QWidget(parent), ui(new Ui::Game) {
   ui->setupUi(this);
@@ -52,4 +53,9 @@ void Game::keyPressEvent(QKeyEvent *event) {
 
       break;
   }
+}
+
+void Game::mousePressEvent(QMouseEvent *event) {
+  spdlog::info("Mouse Pressed: Pos({}, {})", event->localPos().x(),
+               event->localPos().y());
 }
