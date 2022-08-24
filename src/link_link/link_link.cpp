@@ -459,6 +459,11 @@ void link_link::LinkLink::switchToContest() {
 }
 
 void link_link::LinkLink::save(ostream &out) const {
+
+  info("LinkLink: Saving Game Archive");
+
+  out << gameTime << ' ';
+
   out << players.size() << ' ';
 
   for (const auto &player: players) { player->save(out); }

@@ -32,7 +32,7 @@ Game::Game(QWidget *parent)
   });
   connect(ui->save, &QPushButton::pressed, this, [this]() {
     QString filename = QFileDialog::getSaveFileName(
-      nullptr, QObject::tr("Open Document"), QDir::currentPath(),
+      nullptr, QObject::tr("Save Game"), QDir::currentPath(),
       QObject::tr("Game achive (*.ga)"));
 
     ofstream out;

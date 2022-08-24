@@ -54,7 +54,6 @@ class Game : public QWidget {
   };
 
   private:
-  //      link_link::block::Player player;
   GameStatus status;
   link_link::LinkLink gameEngine;
 };

@@ -66,6 +66,13 @@
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="load">
+           <property name="text">
+            <string>Load</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="exit">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
