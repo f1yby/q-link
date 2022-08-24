@@ -39,6 +39,8 @@ private:
     bool checkLinePenetratable(block::Line) const;
     block::Points genPenetratableLine(block::Line) const;
     block::Points findLinkedPair() const;
+
+private:
     uint64_t gameTime;
     uint64_t hintTime;
     bool isHintEnd() const;
@@ -58,5 +60,6 @@ public:
     void switchToContest();
 
     void reset();
+
   };
 }// namespace link_link

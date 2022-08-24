@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
           &MainWindow::switchToContestGame);
 
 
-  connect(game, &Game::exitGame, this, [this]() { switchWidget(menu); });
+  connect(game, &Game::exitGame, this, &MainWindow::switchToMenu);
   switchWidget(menu);
 }
 MainWindow::~MainWindow() {

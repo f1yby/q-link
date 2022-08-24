@@ -5,6 +5,7 @@
 #include <QTime>
 #include <QTimer>
 #include <iostream>
+#include <qpushbutton.h>
 #include <qwidget.h>
 #include <spdlog/spdlog.h>
 #include <string>
@@ -16,10 +17,16 @@ Game::Game(QWidget *parent)
   auto *renderTimer = new QTimer(this);
   connect(renderTimer, &QTimer::timeout, this, QOverload<>::of(&Game::update));
   renderTimer->start(1);
+
+
   auto *secondTimer = new QTimer(this);
-  connect(secondTimer, &QTimer::timeout, this,
-          QOverload<>::of(&Game::elaspe1Second));
+  connect(secondTimer, &QTimer::timeout, this, &Game::elaspe1Second);
   secondTimer->start(1000);
+
+  connect(ui->exitButton, &QPushButton::pressed, this, [this]() {
+    reset();
+    emit exitGame();
+  });
 }
 
 Game::~Game() { delete ui; }
@@ -43,23 +50,37 @@ void Game::paintEvent(QPaintEvent *event) {
 void Game::renderNormalLayout() {
   QPainter painter(this);
   gameEngine.render(painter);
+
   ui->timeValue->setText(QString::number(gameEngine.getGameTime()));
   ui->p1Score->setText(QString::number(gameEngine.getP1Score()));
   ui->p2Score->setText(QString::number(gameEngine.getP2Score()));
-  ui->paused->hide();
+
+  ui->title->hide();
+
+  ui->exitButton->hide();
+
+  if (gameEngine.isGameEnd()) { status = GameStatus::End; }
 }
 void Game::renderPausedLayout() {
   ui->timeValue->setText(QString::number(gameEngine.getGameTime()));
   ui->p1Score->setText(QString::number(gameEngine.getP1Score()));
   ui->p2Score->setText(QString::number(gameEngine.getP2Score()));
-  ui->paused->show();
+
+  ui->title->setText(QString("Paused"));
+  ui->title->show();
+
+  ui->exitButton->show();
 }
 
 void Game::renderEndLayout() {
   ui->timeValue->setText(QString::number(gameEngine.getGameTime()));
   ui->p1Score->setText(QString::number(gameEngine.getP1Score()));
   ui->p2Score->setText(QString::number(gameEngine.getP2Score()));
-  ui->paused->hide();
+
+  ui->title->setText(QString("Game Over"));
+  ui->title->show();
+
+  ui->exitButton->show();
 }
 
 
@@ -87,4 +108,7 @@ void Game::mousePressEvent(QMouseEvent *event) {
 void Game::switchToSingle() { gameEngine.switchToSingle(); }
 void Game::switchToContest() { gameEngine.switchToContest(); }
 
-void Game::reset() { gameEngine.reset(); }
+void Game::reset() {
+  status = GameStatus::Normal;
+  gameEngine.reset();
+}

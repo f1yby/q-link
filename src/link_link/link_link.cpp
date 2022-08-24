@@ -430,10 +430,19 @@ bool link_link::LinkLink::isPaused() const { return paused; }
 void link_link::LinkLink::togglePaused() { paused = !isPaused(); };
 
 void link_link::LinkLink::reset() {
+
+  gameTime = 100;
+  hintTime = 0;
+  paused = false;
+
   for (auto &player: players) {
     player->score = 0;
     player->selectedPoint = {0, 0};
+    player->position = {1, 1};
   }
+
+  linkedPath.clear();
+
   map = generateBlocks({
     mapSize[0],
     mapSize[1],
