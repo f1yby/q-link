@@ -63,9 +63,9 @@ namespace link_link::block {
     Player1,
     Player2,
   };
-  enum class GameMode {
+  
+  enum class GameType {
     Single,
     Contest,
   };
-
 }// namespace link_link::block

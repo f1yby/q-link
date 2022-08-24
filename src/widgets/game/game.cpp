@@ -10,7 +10,7 @@
 #include <string>
 using namespace link_link::block;
 Game::Game(QWidget *parent)
-    : QWidget(parent), ui(new Ui::Game), gameEngine(GameMode::Contest),
+    : QWidget(parent), ui(new Ui::Game), gameEngine(),
       status(GameStatus::Normal) {
   ui->setupUi(this);
   auto *renderTimer = new QTimer(this);
@@ -26,13 +26,14 @@ Game::~Game() { delete ui; }
 
 void Game::paintEvent(QPaintEvent *event) {
   switch (status) {
-    case Game::Normal:
+    case GameStatus::Normal:
       renderNormalLayout();
       break;
-    case Game::Paused:
+    case GameStatus::Paused:
       renderPausedLayout();
       break;
-    case Game::End:
+    case GameStatus::End:
+      renderEndLayout();
       break;
     default:
       break;
@@ -82,3 +83,8 @@ void Game::mousePressEvent(QMouseEvent *event) {
   spdlog::info("Mouse Pressed: Pos({}, {})", event->localPos().x(),
                event->localPos().y());
 }
+
+void Game::switchToSingle() { gameEngine.switchToSingle(); }
+void Game::switchToContest() { gameEngine.switchToContest(); }
+
+void Game::reset() { gameEngine.reset(); }

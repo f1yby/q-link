@@ -15,7 +15,7 @@ namespace link_link {
     constexpr static const uint16_t mapSize[2] = {28, 28};
 
 public:
-    LinkLink(block::GameMode gameMode);
+    LinkLink();
     void render(QPainter &qPainter);
 
 private:
@@ -37,8 +37,8 @@ private:
 private:
     block::Points genLinkablePath(block::Line) const;
     bool checkLinePenetratable(block::Line) const;
-    block::Points genPenetratableLine(block::Line)const;
-    block::Points findLinkedPair()const;
+    block::Points genPenetratableLine(block::Line) const;
+    block::Points findLinkedPair() const;
     uint64_t gameTime;
     uint64_t hintTime;
     bool isHintEnd() const;
@@ -53,5 +53,10 @@ public:
 
     bool isGameEnd() const;
     void togglePaused();
+
+    void switchToSingle();
+    void switchToContest();
+
+    void reset();
   };
 }// namespace link_link

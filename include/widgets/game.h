@@ -28,16 +28,21 @@ class Game : public QWidget {
 
   protected:
   void paintEvent(QPaintEvent *event) override;
-      void renderEndLayout();
-      void renderPausedLayout();
-      void renderNormalLayout();
+  void renderEndLayout();
+  void renderPausedLayout();
+  void renderNormalLayout();
 
   public:
   void keyPressEvent(QKeyEvent *event) override;
   void mousePressEvent(QMouseEvent *event) override;
 
   public:
-  enum GameStatus {
+  void switchToSingle();
+  void switchToContest();
+
+  void reset();
+
+  enum class GameStatus {
     Normal,
     Paused,
     End,

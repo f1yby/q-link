@@ -19,5 +19,6 @@ class Menu : public QWidget {
   Ui::Menu *ui;
   signals:
   void exitButtonPushed();
-  void startGameButtonPushed();
+  void startSingleGameButtonPushed();
+  void startContestGameButtonPushed();
 };

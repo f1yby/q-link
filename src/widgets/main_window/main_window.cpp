@@ -11,8 +11,13 @@ MainWindow::MainWindow(QWidget *parent)
   ui->horizontalLayout->addWidget(menu);
   ui->horizontalLayout->addWidget(game);
   connect(menu, &Menu::exitButtonPushed, this, &MainWindow::close);
-  connect(menu, &Menu::startGameButtonPushed, this,
-          [this]() { switchWidget(game); });
+
+  connect(menu, &Menu::startSingleGameButtonPushed, this,
+          &MainWindow::switchToSingleGame);
+  connect(menu, &Menu::startContestGameButtonPushed, this,
+          &MainWindow::switchToContestGame);
+
+
   connect(game, &Game::exitGame, this, [this]() { switchWidget(menu); });
   switchWidget(menu);
 }
@@ -27,8 +32,15 @@ void MainWindow::switchWidget(QWidget *widget) {
   widget->show();
   widget->setFocus();
 }
-void MainWindow::switchToGame() { switchWidget(game); }
+void MainWindow::switchToSingleGame() {
+  game->switchToSingle();
+  switchWidget(game);
+}
+void MainWindow::switchToContestGame() {
+  game->switchToContest();
+  switchWidget(game);
+}
 void MainWindow::switchToMenu() { switchWidget(menu); }
-void MainWindow::keyPressEvent(QKeyEvent *event) { 
-  //game->keyPressEvent(event); 
+void MainWindow::keyPressEvent(QKeyEvent *event) {
+  //game->keyPressEvent(event);
 }

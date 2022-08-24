@@ -14,7 +14,7 @@ using namespace std;
 using namespace spdlog;
 using namespace Qt;
 
-link_link::LinkLink::LinkLink(GameMode gameMode)
+link_link::LinkLink::LinkLink()
     : map(generateBlocks({
         mapSize[0],
         mapSize[1],
@@ -22,12 +22,7 @@ link_link::LinkLink::LinkLink(GameMode gameMode)
       players({
         make_shared<Player>(Point{1, 1}, PlayerType::Player1, Point{0, 0}),
       }),
-      linkedPath(), gameTime(100), hintTime(0), paused(false) {
-  if (gameMode == GameMode::Contest) {
-    players.push_back(
-      make_shared<Player>(Point{1, 1}, PlayerType::Player2, Point{0, 0}));
-  }
-}
+      linkedPath(), gameTime(100), hintTime(0), paused(false) {}
 
 void link_link::LinkLink::render(QPainter &qPainter) {
   //Leave Space for border
@@ -334,7 +329,9 @@ bool link_link::LinkLink::isHintEnd() const { return hintTime == 0; }
 
 uint64_t link_link::LinkLink::getP1Score() const { return players[0]->score; }
 
-uint64_t link_link::LinkLink::getP2Score() const { return players[1]->score; }
+uint64_t link_link::LinkLink::getP2Score() const {
+  return players.size() == 2 ? players[1]->score : 0;
+}
 
 static inline bool isDiamond(uint64_t id) {
   if (id % blockType == static_cast<uint64_t>(BlockType::Diamond)) {
@@ -431,3 +428,22 @@ Points link_link::LinkLink::findLinkedPair() const {
 bool link_link::LinkLink::isPaused() const { return paused; }
 
 void link_link::LinkLink::togglePaused() { paused = !isPaused(); };
+
+void link_link::LinkLink::reset() {
+  for (auto &player: players) {
+    player->score = 0;
+    player->selectedPoint = {0, 0};
+  }
+  map = generateBlocks({
+    mapSize[0],
+    mapSize[1],
+  });
+}
+
+void link_link::LinkLink::switchToSingle() { players.resize(1); }
+void link_link::LinkLink::switchToContest() {
+  if (players.size() == 1) {
+    players.push_back(
+      make_shared<Player>(Point{1, 1}, PlayerType::Player2, Point{0, 0}));
+  }
+}

@@ -26,7 +26,8 @@ class MainWindow : public QWidget {
   void switchWidget(QWidget *widget);
 
   private slots:
-  void switchToGame();
+  void switchToSingleGame();
+      void switchToContestGame();
   void switchToMenu();
 
 
