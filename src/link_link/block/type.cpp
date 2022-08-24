@@ -168,3 +168,24 @@ Map link_link::block::generateBlocks(Point size) {
   }
   return map;
 }
+
+BlockPointer link_link::block::generateById(uint64_t id) {
+  auto type = static_cast<BlockType>(id % blockType);
+  switch (type) {
+    case BlockType::Blank:
+      return BlockPointer{new Blank()};
+      break;
+    case BlockType::Diamond:
+      return BlockPointer{new Diamond(id)};
+      break;
+    case BlockType::Wall:
+      return BlockPointer{new Wall()};
+      break;
+    case BlockType::Special:
+      return BlockPointer{new Special(id)};
+      break;
+    default:
+      break;
+  }
+  return BlockPointer{new Blank()};
+}

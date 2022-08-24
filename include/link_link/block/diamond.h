@@ -23,6 +23,7 @@ private:
 
 public:
     Diamond(const Color &color, const Shape &shape);
+    explicit Diamond(uint64_t id);
   };
 
 }// namespace link_link::block

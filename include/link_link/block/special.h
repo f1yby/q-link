@@ -20,6 +20,7 @@ private:
 
 public:
     explicit Special(SpecialType type);
+    explicit Special(uint64_t id);
   };
 
 }// namespace link_link::block

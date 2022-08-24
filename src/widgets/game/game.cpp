@@ -40,6 +40,17 @@ Game::Game(QWidget *parent)
     gameEngine.save(out);
     out.close();
   });
+
+  connect(ui->load, &QPushButton::pressed, this, [this]() {
+    QString filename = QFileDialog::getOpenFileName(
+      nullptr, QObject::tr("Load Game"), QDir::currentPath(),
+      QObject::tr("Game achive (*.ga)"));
+
+    ifstream in;
+    in.open(filename.toStdString());
+    gameEngine.load(in);
+    in.close();
+  });
 }
 
 Game::~Game() { delete ui; }
@@ -70,7 +81,8 @@ void Game::renderNormalLayout() {
 
   ui->title->hide();
   ui->save->hide();
-  ui->exit->hide();
+  ui->load->hide();
+             ui->exit->hide();
 
   if (gameEngine.isGameEnd()) { status = GameStatus::End; }
 }
@@ -82,6 +94,7 @@ void Game::renderPausedLayout() {
   ui->title->setText(QString("Paused"));
   ui->title->show();
   ui->save->show();
+  ui->load->show();
   ui->exit->show();
 }
 
@@ -93,6 +106,7 @@ void Game::renderEndLayout() {
   ui->title->setText(QString("Game Over"));
   ui->title->show();
   ui->save->show();
+  ui->load->show();
   ui->exit->show();
 }
 

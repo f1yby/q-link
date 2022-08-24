@@ -68,4 +68,6 @@ namespace link_link::block {
     Single,
     Contest,
   };
+  
+  BlockPointer generateById(uint64_t);
 }// namespace link_link::block

@@ -117,10 +117,19 @@ Player::Player(Point position, PlayerType player, Point selectedPoint)
 
 uint64_t Player::id() const { return static_cast<uint64_t>(BlockType::Player); }
 
-void Player::save(ostream &out) {
+
+void Player::save(ostream &out) const {
   out << score << ' ';
   out << position.first << ' ';
   out << position.second << ' ';
   out << selectedPoint.first << ' ';
   out << selectedPoint.second << ' ';
+}
+
+void Player::load(istream &in) {
+  in >> score;
+  in >> position.first;
+  in >> position.second;
+  in >> selectedPoint.first;
+  in >> selectedPoint.second;
 }

@@ -474,4 +474,38 @@ void link_link::LinkLink::save(ostream &out) const {
   for (const auto &row: map) {
     for (const auto &block: row) { out << block->id() << ' '; }
   }
+
+}
+
+void link_link::LinkLink::load(istream &in) {
+  info("LinkLink: Loading Game Archive");
+
+  uint64_t buffer;
+
+  in >> gameTime;
+
+  in >> buffer;
+  if (buffer == 1) {
+    switchToSingle();
+  } else {
+    switchToContest();
+  }
+
+  for (auto &player: players) { player->load(in); }
+
+  in >> buffer;
+  map.resize(buffer);
+
+  in >> buffer;
+  for (auto &row: map) { row.resize(buffer); }
+
+  for (auto &row: map) {
+    for (auto &block: row) {
+
+      in >> buffer;
+      block = generateById(buffer);
+    }
+  }
+
+  linkedPath.clear();
 }

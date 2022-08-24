@@ -30,7 +30,10 @@ Reactions link_link::block::Special::onCollided() const {
   }
 }
 
-uint64_t link_link::block::Special::id() const { return uint64_t(); }
+uint64_t link_link::block::Special::id() const {
+  return static_cast<uint64_t>(BlockType::Special) +
+         blockType * (static_cast<uint64_t>(type));
+}
 
 void link_link::block::Special::render(QPainter &qPainter) const {
   qPainter.save();
@@ -51,4 +54,9 @@ void link_link::block::Special::render(QPainter &qPainter) const {
   auto &points = shapeMap.find(shape)->second;
   qPainter.drawConvexPolygon(&points[0], points.size());
   qPainter.restore();
+}
+
+link_link::block::Special::Special(uint64_t id) {
+  id /= blockType;
+  type = static_cast<SpecialType>(id);
 }

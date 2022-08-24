@@ -23,7 +23,7 @@ public:
     Point selectedPoint;
 
 public:
-    void save(std::ostream &);
+    void save(std::ostream &)const;
     void load(std::istream &);
 
 public:
