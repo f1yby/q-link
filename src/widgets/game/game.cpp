@@ -1,15 +1,18 @@
 #include "game.h"
 #include "ui_game.h"
+#include <QFileDialog>
 #include <QKeyEvent>
 #include <QPainter>
 #include <QTime>
 #include <QTimer>
+#include <fstream>
 #include <iostream>
 #include <qpushbutton.h>
 #include <qwidget.h>
 #include <spdlog/spdlog.h>
 #include <string>
 using namespace link_link::block;
+using namespace std;
 Game::Game(QWidget *parent)
     : QWidget(parent), ui(new Ui::Game), gameEngine(),
       status(GameStatus::Normal) {
@@ -23,9 +26,19 @@ Game::Game(QWidget *parent)
   connect(secondTimer, &QTimer::timeout, this, &Game::elaspe1Second);
   secondTimer->start(1000);
 
-  connect(ui->exitButton, &QPushButton::pressed, this, [this]() {
+  connect(ui->exit, &QPushButton::pressed, this, [this]() {
     reset();
     emit exitGame();
+  });
+  connect(ui->save, &QPushButton::pressed, this, [this]() {
+    QString filename = QFileDialog::getSaveFileName(
+      nullptr, QObject::tr("Open Document"), QDir::currentPath(),
+      QObject::tr("Game achive (*.ga)"));
+
+    ofstream out;
+    out.open(filename.toStdString());
+    gameEngine.save(out);
+    out.close();
   });
 }
 
@@ -56,8 +69,8 @@ void Game::renderNormalLayout() {
   ui->p2Score->setText(QString::number(gameEngine.getP2Score()));
 
   ui->title->hide();
-
-  ui->exitButton->hide();
+  ui->save->hide();
+  ui->exit->hide();
 
   if (gameEngine.isGameEnd()) { status = GameStatus::End; }
 }
@@ -68,8 +81,8 @@ void Game::renderPausedLayout() {
 
   ui->title->setText(QString("Paused"));
   ui->title->show();
-
-  ui->exitButton->show();
+  ui->save->show();
+  ui->exit->show();
 }
 
 void Game::renderEndLayout() {
@@ -79,8 +92,8 @@ void Game::renderEndLayout() {
 
   ui->title->setText(QString("Game Over"));
   ui->title->show();
-
-  ui->exitButton->show();
+  ui->save->show();
+  ui->exit->show();
 }
 
 
@@ -112,3 +125,7 @@ void Game::reset() {
   status = GameStatus::Normal;
   gameEngine.reset();
 }
+
+void Game::save() { gameEngine.save(std::cout); }
+
+void load() {}

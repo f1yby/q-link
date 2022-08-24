@@ -6,6 +6,7 @@
 #include "block/block.h"
 #include "block/type.h"
 #include <cstdint>
+#include <iostream>
 namespace link_link {
   namespace block {
     class Block;
@@ -61,5 +62,8 @@ public:
 
     void reset();
 
+public:
+    void save(std::ostream &)const;
+    void load(std::istream &);
   };
 }// namespace link_link

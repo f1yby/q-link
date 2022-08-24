@@ -450,9 +450,23 @@ void link_link::LinkLink::reset() {
 }
 
 void link_link::LinkLink::switchToSingle() { players.resize(1); }
+
 void link_link::LinkLink::switchToContest() {
   if (players.size() == 1) {
     players.push_back(
       make_shared<Player>(Point{1, 1}, PlayerType::Player2, Point{0, 0}));
+  }
+}
+
+void link_link::LinkLink::save(ostream &out) const {
+  out << players.size() << ' ';
+
+  for (const auto &player: players) { player->save(out); }
+
+  out << map.size() << ' ';
+  out << map[0].size() << ' ';
+
+  for (const auto &row: map) {
+    for (const auto &block: row) { out << block->id() << ' '; }
   }
 }

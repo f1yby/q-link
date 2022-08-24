@@ -12,7 +12,7 @@ public:
 
 public:
     [[nodiscard]] Reactions onManipulated(Qt::Key) const;
-    void renderSelectedMark(QPainter&) const;
+    void renderSelectedMark(QPainter &) const;
 
 public:
     static Row generate();
@@ -21,6 +21,10 @@ public:
     Point position;
     uint64_t score;
     Point selectedPoint;
+
+public:
+    void save(std::ostream &);
+    void load(std::istream &);
 
 public:
     explicit Player(Point position, PlayerType player, Point selectedPoint);

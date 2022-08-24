@@ -5,6 +5,7 @@
 #include "block/player.h"
 
 #include "block/type.h"
+#include <iostream>
 #include <map>
 using namespace link_link;
 using namespace link_link::block;
@@ -115,3 +116,11 @@ Player::Player(Point position, PlayerType player, Point selectedPoint)
       selectedPoint(selectedPoint) {}
 
 uint64_t Player::id() const { return static_cast<uint64_t>(BlockType::Player); }
+
+void Player::save(ostream &out) {
+  out << score << ' ';
+  out << position.first << ' ';
+  out << position.second << ' ';
+  out << selectedPoint.first << ' ';
+  out << selectedPoint.second << ' ';
+}

@@ -42,6 +42,11 @@ class Game : public QWidget {
 
   void reset();
 
+  public:
+  void save();
+  void load();
+
+
   enum class GameStatus {
     Normal,
     Paused,
