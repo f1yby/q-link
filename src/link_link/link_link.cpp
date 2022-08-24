@@ -189,7 +189,12 @@ void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
             map[j][i] = weight[ii];
           }
         }
+
+        for (auto &player: players) { player->selectedPoint = {0, 0}; }
+
+
         linkedPath.clear();
+        break;
       }
       case Reaction::Hint: {
         hintedPoints = findLinkedPair();
@@ -474,7 +479,6 @@ void link_link::LinkLink::save(ostream &out) const {
   for (const auto &row: map) {
     for (const auto &block: row) { out << block->id() << ' '; }
   }
-
 }
 
 void link_link::LinkLink::load(istream &in) {
