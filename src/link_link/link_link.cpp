@@ -9,6 +9,7 @@
 #include <iostream>
 #include <memory>
 #include <random>
+#include <set>
 #include <spdlog/spdlog.h>
 using namespace link_link::block;
 using namespace link_link;
@@ -28,20 +29,21 @@ link_link::LinkLink::LinkLink()
       }),
       linkedPath(), gameTime(0), gameEndStamp(100), hintTimeStamp(0),
       paused(false), flashing(false), gameType(GameType::Single) {}
+
 Map link_link::LinkLink::generateBlocks(Point size, GameType gameType) {
   Map map;
   for (auto j = 0; j < size.first; ++j) {
     map.push_back({});
     for (auto i = 0; i < size.second; ++i) {
-      map[j].push_back(std::shared_ptr<Block>(new Blank()));
+      map[j].push_back(std::make_shared<Blank>());
     }
   }
   for (auto j = 0; j < size.first; ++j) {
     for (auto i = 0; i < size.second; ++i) {
       if (j == 0 || j == size.first - 1) {
-        map[j][i] = std::shared_ptr<Block>(new Wall());
+        map[j][i] = std::make_shared<Wall>();
       } else if (i == 0 || i == size.second - 1) {
-        map[j][i] = std::shared_ptr<Block>(new Wall());
+        map[j][i] = std::make_shared<Wall>();
       }
     }
   }
@@ -51,27 +53,27 @@ Map link_link::LinkLink::generateBlocks(Point size, GameType gameType) {
 
   weight.reserve(diamonds);
   for (auto i = 0; i < 2; ++i) {
-    weight.push_back(BlockPointer(new Special(SpecialType::PlusOneSecond)));
-    weight.push_back(BlockPointer(new Special(SpecialType::Shuffle)));
-    weight.push_back(BlockPointer(new Special(SpecialType::Hint)));
+    weight.push_back(std::make_shared<Special>(SpecialType::PlusOneSecond));
+    weight.push_back(std::make_shared<Special>(SpecialType::Shuffle));
+    weight.push_back(std::make_shared<Special>(SpecialType::Hint));
     switch (gameType) {
       case link_link::LinkLink::GameType::Single:
-        weight.push_back(BlockPointer(new Special(SpecialType::Flash)));
+        weight.push_back(std::make_shared<Special>(SpecialType::Flash));
         break;
       case link_link::LinkLink::GameType::Contest:
-        weight.push_back(BlockPointer(new Special(SpecialType::Freeze)));
-        weight.push_back(BlockPointer(new Special(SpecialType::Dizzy)));
+        weight.push_back(std::make_shared<Special>(SpecialType::Freeze));
+        weight.push_back(std::make_shared<Special>(SpecialType::Dizzy));
         break;
       default:
         break;
     }
   }
 
-  for (auto i = 0; i < diamonds; ++ ++i) {
-    weight.push_back(BlockPointer(new Diamond(static_cast<Color>(i % colors),
-                                              static_cast<Shape>(i % shapes))));
-    weight.push_back(BlockPointer(new Diamond(static_cast<Color>(i % colors),
-                                              static_cast<Shape>(i % shapes))));
+  for (auto i = diamonds - weight.size(); i > 0; -- --i) {
+    weight.push_back(std::make_shared<Diamond>(static_cast<Color>(i % colors),
+                                               static_cast<Shape>(i % shapes)));
+    weight.push_back(std::make_shared<Diamond>(static_cast<Color>(i % colors),
+                                               static_cast<Shape>(i % shapes)));
   }
 
   static random_device rd;
@@ -81,9 +83,11 @@ Map link_link::LinkLink::generateBlocks(Point size, GameType gameType) {
   }
   return map;
 }
+
 void link_link::LinkLink::render(QPainter &qPainter) {
   //Leave Space for border
   qPainter.save();
+  qPainter.translate(1, 1);
   qPainter.translate(1, 1);
 
   //Draw Diamonds
@@ -158,7 +162,32 @@ void link_link::LinkLink::manipulate(Key key) {
     for (auto reaction: reactions) { handleReaction(reaction, player); }
   }
 }
+void link_link::LinkLink::click(QPointF point) {
+  if (!isFlashing()) { return; }
+  auto position = Point{point.y() / 20, point.x() / 20};
+  for (auto i: {0, -1, 1}) {
+    auto j = 0;
+    auto p = Point{position.first + i, position.second + j};
+    if (checkPathable({players[0]->position, p})) {
+      players[0]->position = p;
+      handleCollidedReaction(players[0], p,
+                             map[p.first][p.second]->onCollided());
+      flashing = false;
+    }
+  }
+  for (auto j: {-1, 1}) {
+    auto i = 0;
+    auto p = Point{position.first + i, position.second + j};
+    if (checkPathable({players[0]->position, p})) {
+      players[0]->position = p;
+      handleCollidedReaction(
+        players[0], position,
+        map[position.first][position.second]->onCollided());
+      flashing = false;
+    }
+  }
 
+}
 void link_link::LinkLink::elapse(uint32_t second) {
   if (isGameEnd() || isPaused()) { return; }
 
@@ -196,8 +225,8 @@ void link_link::LinkLink::handleReaction(const Reaction &reaction,
 
 void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
                                       const Reactions &reactions) {
-  for (const auto &i: reactions) {
-    switch (i) {
+  for (const auto &reaction: reactions) {
+    switch (reaction) {
       case Reaction::Penetrate:
         colliding->position = collided;
         break;
@@ -248,13 +277,17 @@ void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
 
         for (auto &player: players) { player->selectedPoint = {0, 0}; }
 
-
         linkedPath.clear();
         break;
       }
       case Reaction::Hint: {
         hintedPoints = findLinkedPair();
         hintTimeStamp = getGameTime() + 10;
+        break;
+      }
+      case Reaction::StartFlash: {
+        flashing = true;
+        break;
       }
       default:
         break;
@@ -274,13 +307,23 @@ Points link_link::LinkLink::genLinkablePath(Line line) const {
   auto xMax = map[0].size();
 
   for (int i = 0; i < yMax; ++i) {
-    auto lines =
-      vector<Line>{{{i, first.second}, {i, second.second}},
-                   {{i, first.second}, {first.first, first.second}},
-                   {{i, second.second}, {second.first, second.second}}};
+    auto lines = vector<Line>{
+      {
+        {i, first.second},
+        {i, second.second},
+      },
+      {
+        {i, first.second},
+        {first.first, first.second},
+      },
+      {
+        {i, second.second},
+        {second.first, second.second},
+      },
+    };
     bool valid = true;
-    for (const auto &line: lines) {
-      if (!checkLinePenetratable(line)) {
+    for (const auto &l: lines) {
+      if (!checkLinePenetratable(l)) {
         valid = false;
         break;
       }
@@ -291,8 +334,8 @@ Points link_link::LinkLink::genLinkablePath(Line line) const {
     }
     if (!valid) { continue; }
     auto ret = Points();
-    for (const auto &line: lines) {
-      auto penetratableLine = genPenetratableLine(line);
+    for (const auto &l: lines) {
+      auto penetratableLine = genPenetratableLine(l);
       ret.insert(ret.end(), penetratableLine.begin(), penetratableLine.end());
     }
     return ret;
@@ -304,8 +347,8 @@ Points link_link::LinkLink::genLinkablePath(Line line) const {
                    {{first.first, j}, {first.first, first.second}},
                    {{second.first, j}, {second.first, second.second}}};
     bool valid = true;
-    for (const auto &line: lines) {
-      if (!checkLinePenetratable(line)) {
+    for (const auto &l: lines) {
+      if (!checkLinePenetratable(l)) {
         valid = false;
         break;
       }
@@ -316,14 +359,15 @@ Points link_link::LinkLink::genLinkablePath(Line line) const {
     }
     if (!valid) { continue; }
     auto ret = vector<Point>();
-    for (const auto &line: lines) {
-      auto penetratableLine = genPenetratableLine(line);
+    for (const auto &l: lines) {
+      auto penetratableLine = genPenetratableLine(l);
       ret.insert(ret.end(), penetratableLine.begin(), penetratableLine.end());
     }
     return ret;
   }
   return {};
 }
+
 bool link_link::LinkLink::checkLinePenetratable(Line line) const {
 
   int *variable = nullptr;
@@ -358,13 +402,12 @@ bool link_link::LinkLink::checkLinePenetratable(Line line) const {
   return true;
 }
 
-Points link_link::LinkLink::genPenetratableLine(Line line) const {
+Points link_link::LinkLink::genPenetratableLine(Line line) {
   auto first = line.first;
   auto second = line.second;
   int *variable = nullptr;
   int i = first.first;
   int j = first.second;
-  int end = 0;
   Range mm;
   if (first.first == second.first) {
     mm = minmax({first.second, second.second});
@@ -424,20 +467,20 @@ Points link_link::LinkLink::findLinkedPair() const {
         {
           for (; map[c][k]->id() == static_cast<uint64_t>(BlockType::Blank);
                --c) {}
-          auto id = map[c][k]->id();
-          auto iter = points.find(id);
+          auto bid = map[c][k]->id();
+          auto iter = points.find(bid);
           if (iter != points.end()) { return {iter->second, {c, k}}; }
-          if (isDiamond(id)) { points.insert({id, {c, k}}); }
+          if (isDiamond(bid)) { points.insert({bid, {c, k}}); }
         }
         // Go down
         {
           for (c = i;
                map[c][k]->id() == static_cast<uint64_t>(BlockType::Blank);
                ++c) {}
-          auto id = map[c][k]->id();
-          auto iter = points.find(id);
+          auto bid = map[c][k]->id();
+          auto iter = points.find(bid);
           if (iter != points.end()) { return {iter->second, {c, k}}; }
-          if (isDiamond(id)) { points.insert({id, {c, k}}); }
+          if (isDiamond(bid)) { points.insert({bid, {c, k}}); }
         }
       }
       id = map[i][k]->id();
@@ -464,8 +507,24 @@ Points link_link::LinkLink::findLinkedPair() const {
                --c) {}
           auto id = map[k][c]->id();
           auto iter = points.find(id);
-          if (iter != points.end()) { return {iter->second, {k, c}}; }
-          if (isDiamond(id)) { points.insert({id, {k, c}}); }
+          if (iter != points.end()) {
+            return {
+              iter->second,
+              {
+                k,
+                c,
+              },
+            };
+          }
+          if (isDiamond(id)) {
+            points.insert({
+              id,
+              {
+                k,
+                c,
+              },
+            });
+          }
         }
 
         // Go right
@@ -475,13 +534,37 @@ Points link_link::LinkLink::findLinkedPair() const {
                ++c) {}
           auto id = map[k][c]->id();
           auto iter = points.find(id);
-          if (iter != points.end()) { return {iter->second, {k, c}}; }
-          if (isDiamond(id)) { points.insert({id, {k, c}}); }
+          if (iter != points.end()) {
+            return {
+              iter->second,
+              {
+                k,
+                c,
+              },
+            };
+          }
+          if (isDiamond(id)) {
+            points.insert({
+              id,
+              {
+                k,
+                c,
+              },
+            });
+          }
         }
       }
       auto id = map[k][j]->id();
       auto iter = points.find(id);
-      if (iter != points.end()) { return {iter->second, {k, j}}; }
+      if (iter != points.end()) {
+        return {
+          iter->second,
+          {
+            k,
+            j,
+          },
+        };
+      }
       i = k;
     }
   }
@@ -490,7 +573,38 @@ Points link_link::LinkLink::findLinkedPair() const {
   return {};
 }
 
+bool link_link::LinkLink::checkPathable(block::Line line) const {
+  std::list<block::Point> dynamic;
+  std::set<block::Point> pathable;
+  pathable.insert(line.first);
+  dynamic.push_back(line.first);
+  while (!dynamic.empty()) {
+    const auto start = dynamic.front();
+    dynamic.pop_front();
+    for (const auto i: {-1, 0, 1}) {
+      auto j = 0;
+      auto end = Point{start.first + i, start.second + j};
+      if (!pathable.count(end) && map[end.first][end.second]->penetratable()) {
+        pathable.insert(end);
+        dynamic.push_back(end);
+        if (end == line.second) { return true; }
+      }
+    }
+    for (const auto j: {-1, 0, 1}) {
+      auto i = 0;
+      auto end = Point{start.first + i, start.second + j};
+      if (!pathable.count(end) && map[end.first][end.second]->penetratable()) {
+        pathable.insert(end);
+        dynamic.push_back(end);
+        if (end == line.second) { return true; }
+      }
+    }
+  }
+  return false;
+}
 bool link_link::LinkLink::isPaused() const { return paused; }
+
+bool link_link::LinkLink::isFlashing() const { return flashing; }
 
 void link_link::LinkLink::togglePaused() { paused = !isPaused(); };
 
@@ -503,8 +617,14 @@ void link_link::LinkLink::reset() {
 
   for (auto &player: players) {
     player->score = 0;
-    player->selectedPoint = {0, 0};
-    player->position = {1, 1};
+    player->selectedPoint = {
+      0,
+      0,
+    };
+    player->position = {
+      1,
+      1,
+    };
   }
 
   linkedPath.clear();
@@ -515,27 +635,17 @@ void link_link::LinkLink::reset() {
       mapSize[1],
 
     },
-    GameType::Single);
+    gameType);
 }
 
 void link_link::LinkLink::switchToSingle() {
   gameType = GameType::Single;
-
-  players.clear();
-
-  players.push_back(
-    make_shared<Player>(Point{1, 1}, PlayerType::Player1, Point{0, 0}));
+  reset();
 }
 
 void link_link::LinkLink::switchToContest() {
   gameType = GameType::Contest;
-
-  players.clear();
-
-  players.push_back(
-    make_shared<Player>(Point{1, 1}, PlayerType::Player1, Point{0, 0}));
-  players.push_back(
-    make_shared<Player>(Point{1, 1}, PlayerType::Player2, Point{0, 0}));
+  reset();
 }
 
 void link_link::LinkLink::save(ostream &out) const {
@@ -546,6 +656,8 @@ void link_link::LinkLink::save(ostream &out) const {
 
   out << gameEndStamp << ' ';
   out << hintTimeStamp << ' ';
+
+  out << isFlashing() << ' ';
 
   out << players.size() << ' ';
 
@@ -569,6 +681,7 @@ void link_link::LinkLink::load(istream &in) {
   in >> gameEndStamp;
   in >> hintTimeStamp;
 
+  in >> flashing;
 
   in >> buffer;
   if (buffer == 1) {

@@ -130,6 +130,7 @@ void Game::keyPressEvent(QKeyEvent *event) {
 void Game::mousePressEvent(QMouseEvent *event) {
   spdlog::info("Mouse Pressed: Pos({}, {})", event->localPos().x(),
                event->localPos().y());
+  gameEngine.click(event->localPos());
 }
 
 void Game::switchToSingle() { gameEngine.switchToSingle(); }
@@ -141,5 +142,3 @@ void Game::reset() {
 }
 
 void Game::save() { gameEngine.save(std::cout); }
-
-void load() {}

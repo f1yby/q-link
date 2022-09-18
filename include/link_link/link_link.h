@@ -34,6 +34,7 @@ private:
 
 public:
     void manipulate(Qt::Key key);
+    void click(QPointF point);
     void elapse(uint32_t second);
 
 private:
@@ -45,8 +46,9 @@ private:
 private:
     block::Points genLinkablePath(block::Line) const;
     bool checkLinePenetratable(block::Line) const;
-    block::Points genPenetratableLine(block::Line) const;
+    static block::Points genPenetratableLine(block::Line) ;
     block::Points findLinkedPair() const;
+    bool checkPathable(block::Line) const;
 
 private:
     uint64_t gameTime;
@@ -66,7 +68,7 @@ private:
     bool isPaused() const;
     
     bool flashing;
-    bool isFlasing() const;
+    bool isFlashing() const;
 
     uint64_t getGameTime() const;
 public:

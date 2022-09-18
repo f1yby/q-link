@@ -157,19 +157,19 @@ BlockPointer link_link::block::generateById(uint64_t id) {
   auto type = static_cast<BlockType>(id % blockType);
   switch (type) {
     case BlockType::Blank:
-      return BlockPointer{new Blank()};
+      return make_shared<Blank>();
       break;
     case BlockType::Diamond:
-      return BlockPointer{new Diamond(id)};
+      return make_shared<Diamond>(id);
       break;
     case BlockType::Wall:
-      return BlockPointer{new Wall()};
+      return make_shared<Wall>();
       break;
     case BlockType::Special:
-      return BlockPointer{new Special(id)};
+      return make_shared<Special>(id);
       break;
     default:
       break;
   }
-  return BlockPointer{new Blank()};
+  return make_shared<Blank>();
 }
