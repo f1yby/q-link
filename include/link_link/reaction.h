@@ -14,6 +14,9 @@ namespace link_link {
     PlusOneSecond,
     Shuffle,
     Hint,
+    StartFlash,
+    Freeze,
+    Dizzy,
     None,
   };
   typedef std::vector<Reaction> Reactions;

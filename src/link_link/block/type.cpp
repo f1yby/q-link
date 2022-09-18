@@ -91,6 +91,31 @@ const map<Shape, QPoints> link_link::block::shapeMap{
       {0, 20},
     },
   },
+  {
+    Shape::WordF,
+    {
+      {2, 2},
+      {18, 2},
+      {18, 7},
+      {5, 7},
+      {5, 10},
+      {16, 10},
+      {16, 14},
+      {5, 14},
+      {5, 18},
+      {2, 18},
+    },
+  },
+  {
+    Shape::Dizzy,
+    {
+      {1, 10},
+      {10, 1},
+      {10, 19},
+      {19, 10},
+
+    },
+  },
 };
 
 const uint64_t link_link::block::shapes = 1;//shapeMap.size();
@@ -127,47 +152,6 @@ const map<Color, QColor> link_link::block::colorMap = {
 };
 
 const uint64_t link_link::block::colors = colorMap.size();
-
-Map link_link::block::generateBlocks(Point size) {
-  Map map;
-  for (auto j = 0; j < size.first; ++j) {
-    map.push_back({});
-    for (auto i = 0; i < size.second; ++i) {
-      map[j].push_back(std::shared_ptr<Block>(new Blank()));
-    }
-  }
-  for (auto j = 0; j < size.first; ++j) {
-    for (auto i = 0; i < size.second; ++i) {
-      if (j == 0 || j == size.first - 1) {
-        map[j][i] = std::shared_ptr<Block>(new Wall());
-      } else if (i == 0 || i == size.second - 1) {
-        map[j][i] = std::shared_ptr<Block>(new Wall());
-      }
-    }
-  }
-  vector<BlockPointer> weight;
-  uint64_t diamonds = (static_cast<uint64_t>(size.first) - 4) *
-                      (static_cast<unsigned long long>(size.second) - 4);
-  weight.reserve(diamonds);
-  for (auto i = 0; i < 6; ++ ++ ++i) {
-    weight.push_back(BlockPointer(new Special(SpecialType::PlusOneSecond)));
-    weight.push_back(BlockPointer(new Special(SpecialType::Shuffle)));
-    weight.push_back(BlockPointer(new Special(SpecialType::Hint)));
-  }
-  for (auto i = 0; i < diamonds; ++ ++i) {
-    weight.push_back(BlockPointer(new Diamond(static_cast<Color>(i % colors),
-                                              static_cast<Shape>(i % shapes))));
-    weight.push_back(BlockPointer(new Diamond(static_cast<Color>(i % colors),
-                                              static_cast<Shape>(i % shapes))));
-  }
-
-  static random_device rd;
-  shuffle(weight.begin(), weight.end(), default_random_engine(rd()));
-  for (auto j = 2, ii = 0; j < size.first - 2; ++j) {
-    for (auto i = 2; i < size.second - 2; ++i, ++ii) { map[j][i] = weight[ii]; }
-  }
-  return map;
-}
 
 BlockPointer link_link::block::generateById(uint64_t id) {
   auto type = static_cast<BlockType>(id % blockType);

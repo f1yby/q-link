@@ -75,7 +75,7 @@ void Game::renderNormalLayout() {
   QPainter painter(this);
   gameEngine.render(painter);
 
-  ui->timeValue->setText(QString::number(gameEngine.getGameTime()));
+  ui->timeValue->setText(QString::number(gameEngine.getGameTimeLeft()));
   ui->p1Score->setText(QString::number(gameEngine.getP1Score()));
   ui->p2Score->setText(QString::number(gameEngine.getP2Score()));
 
@@ -87,7 +87,7 @@ void Game::renderNormalLayout() {
   if (gameEngine.isGameEnd()) { status = GameStatus::End; }
 }
 void Game::renderPausedLayout() {
-  ui->timeValue->setText(QString::number(gameEngine.getGameTime()));
+  ui->timeValue->setText(QString::number(gameEngine.getGameTimeLeft()));
   ui->p1Score->setText(QString::number(gameEngine.getP1Score()));
   ui->p2Score->setText(QString::number(gameEngine.getP2Score()));
 
@@ -99,7 +99,7 @@ void Game::renderPausedLayout() {
 }
 
 void Game::renderEndLayout() {
-  ui->timeValue->setText(QString::number(gameEngine.getGameTime()));
+  ui->timeValue->setText(QString::number(gameEngine.getGameTimeLeft()));
   ui->p1Score->setText(QString::number(gameEngine.getP1Score()));
   ui->p2Score->setText(QString::number(gameEngine.getP2Score()));
 

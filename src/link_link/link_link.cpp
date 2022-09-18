@@ -3,6 +3,8 @@
 #include "block/diamond.h"
 #include "block/path.h"
 #include "block/player.h"
+#include "block/special.h"
+#include "block/wall.h"
 #include "link_link.h"
 #include <iostream>
 #include <memory>
@@ -15,15 +17,70 @@ using namespace spdlog;
 using namespace Qt;
 
 link_link::LinkLink::LinkLink()
-    : map(generateBlocks({
-        mapSize[0],
-        mapSize[1],
-      })),
+    : map(generateBlocks(
+        {
+          mapSize[0],
+          mapSize[1],
+        },
+        GameType::Single)),
       players({
         make_shared<Player>(Point{1, 1}, PlayerType::Player1, Point{0, 0}),
       }),
-      linkedPath(), gameTime(100), hintTime(0), paused(false) {}
+      linkedPath(), gameTime(0), gameEndStamp(100), hintTimeStamp(0),
+      paused(false), flashing(false), gameType(GameType::Single) {}
+Map link_link::LinkLink::generateBlocks(Point size, GameType gameType) {
+  Map map;
+  for (auto j = 0; j < size.first; ++j) {
+    map.push_back({});
+    for (auto i = 0; i < size.second; ++i) {
+      map[j].push_back(std::shared_ptr<Block>(new Blank()));
+    }
+  }
+  for (auto j = 0; j < size.first; ++j) {
+    for (auto i = 0; i < size.second; ++i) {
+      if (j == 0 || j == size.first - 1) {
+        map[j][i] = std::shared_ptr<Block>(new Wall());
+      } else if (i == 0 || i == size.second - 1) {
+        map[j][i] = std::shared_ptr<Block>(new Wall());
+      }
+    }
+  }
+  vector<BlockPointer> weight;
+  uint64_t diamonds = (static_cast<uint64_t>(size.first) - 4) *
+                      (static_cast<unsigned long long>(size.second) - 4);
 
+  weight.reserve(diamonds);
+  for (auto i = 0; i < 2; ++i) {
+    weight.push_back(BlockPointer(new Special(SpecialType::PlusOneSecond)));
+    weight.push_back(BlockPointer(new Special(SpecialType::Shuffle)));
+    weight.push_back(BlockPointer(new Special(SpecialType::Hint)));
+    switch (gameType) {
+      case link_link::LinkLink::GameType::Single:
+        weight.push_back(BlockPointer(new Special(SpecialType::Flash)));
+        break;
+      case link_link::LinkLink::GameType::Contest:
+        weight.push_back(BlockPointer(new Special(SpecialType::Freeze)));
+        weight.push_back(BlockPointer(new Special(SpecialType::Dizzy)));
+        break;
+      default:
+        break;
+    }
+  }
+
+  for (auto i = 0; i < diamonds; ++ ++i) {
+    weight.push_back(BlockPointer(new Diamond(static_cast<Color>(i % colors),
+                                              static_cast<Shape>(i % shapes))));
+    weight.push_back(BlockPointer(new Diamond(static_cast<Color>(i % colors),
+                                              static_cast<Shape>(i % shapes))));
+  }
+
+  static random_device rd;
+  shuffle(weight.begin(), weight.end(), default_random_engine(rd()));
+  for (auto j = 2, ii = 0; j < size.first - 2; ++j) {
+    for (auto i = 2; i < size.second - 2; ++i, ++ii) { map[j][i] = weight[ii]; }
+  }
+  return map;
+}
 void link_link::LinkLink::render(QPainter &qPainter) {
   //Leave Space for border
   qPainter.save();
@@ -105,8 +162,7 @@ void link_link::LinkLink::manipulate(Key key) {
 void link_link::LinkLink::elapse(uint32_t second) {
   if (isGameEnd() || isPaused()) { return; }
 
-  this->gameTime -= second;
-  if (!isHintEnd()) { this->hintTime -= second; }
+  this->gameTime += second;
 }
 
 
@@ -171,7 +227,7 @@ void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
           BlockPointer(make_shared<Blank>());
         break;
       case Reaction::PlusOneSecond:
-        gameTime += 30;
+        gameEndStamp += 30;
         break;
       case Reaction::Shuffle: {
         for (auto &i: players) { i->position = {1, 1}; }
@@ -198,7 +254,7 @@ void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
       }
       case Reaction::Hint: {
         hintedPoints = findLinkedPair();
-        hintTime = 10;
+        hintTimeStamp = getGameTime() + 10;
       }
       default:
         break;
@@ -328,9 +384,13 @@ Points link_link::LinkLink::genPenetratableLine(Line line) const {
 
 uint64_t link_link::LinkLink::getGameTime() const { return gameTime; }
 
-bool link_link::LinkLink::isGameEnd() const { return gameTime == 0; }
+uint64_t link_link::LinkLink::getGameTimeLeft() const {
+  return gameEndStamp - gameTime;
+}
 
-bool link_link::LinkLink::isHintEnd() const { return hintTime == 0; }
+bool link_link::LinkLink::isGameEnd() const { return gameTime > gameEndStamp; }
+
+bool link_link::LinkLink::isHintEnd() const { return gameTime > hintTimeStamp; }
 
 uint64_t link_link::LinkLink::getP1Score() const { return players[0]->score; }
 
@@ -436,8 +496,9 @@ void link_link::LinkLink::togglePaused() { paused = !isPaused(); };
 
 void link_link::LinkLink::reset() {
 
-  gameTime = 100;
-  hintTime = 0;
+  gameTime = 0;
+  gameEndStamp = 100;
+  hintTimeStamp = 0;
   paused = false;
 
   for (auto &player: players) {
@@ -448,19 +509,33 @@ void link_link::LinkLink::reset() {
 
   linkedPath.clear();
 
-  map = generateBlocks({
-    mapSize[0],
-    mapSize[1],
-  });
+  map = generateBlocks(
+    {
+      mapSize[0],
+      mapSize[1],
+
+    },
+    GameType::Single);
 }
 
-void link_link::LinkLink::switchToSingle() { players.resize(1); }
+void link_link::LinkLink::switchToSingle() {
+  gameType = GameType::Single;
+
+  players.clear();
+
+  players.push_back(
+    make_shared<Player>(Point{1, 1}, PlayerType::Player1, Point{0, 0}));
+}
 
 void link_link::LinkLink::switchToContest() {
-  if (players.size() == 1) {
-    players.push_back(
-      make_shared<Player>(Point{1, 1}, PlayerType::Player2, Point{0, 0}));
-  }
+  gameType = GameType::Contest;
+
+  players.clear();
+
+  players.push_back(
+    make_shared<Player>(Point{1, 1}, PlayerType::Player1, Point{0, 0}));
+  players.push_back(
+    make_shared<Player>(Point{1, 1}, PlayerType::Player2, Point{0, 0}));
 }
 
 void link_link::LinkLink::save(ostream &out) const {
@@ -468,6 +543,9 @@ void link_link::LinkLink::save(ostream &out) const {
   info("LinkLink: Saving Game Archive");
 
   out << gameTime << ' ';
+
+  out << gameEndStamp << ' ';
+  out << hintTimeStamp << ' ';
 
   out << players.size() << ' ';
 
@@ -487,6 +565,10 @@ void link_link::LinkLink::load(istream &in) {
   uint64_t buffer;
 
   in >> gameTime;
+
+  in >> gameEndStamp;
+  in >> hintTimeStamp;
+
 
   in >> buffer;
   if (buffer == 1) {

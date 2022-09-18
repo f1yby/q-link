@@ -36,7 +36,16 @@ namespace link_link::block {
   typedef std::vector<Row> Map;
   extern const std::map<BlockType, Range> blockConstrain;
 
-  enum class Shape { Square, Triangle, Circle, WordT, WordS, WordH };
+  enum class Shape {
+    Square,
+    Triangle,
+    Circle,
+    WordT,
+    WordS,
+    WordH,
+    WordF,
+    Dizzy,
+  };
   extern const std::map<Shape, QPoints> shapeMap;
   extern const uint64_t shapes;
   enum class Color {
@@ -51,23 +60,25 @@ namespace link_link::block {
   extern const std::map<Color, QColor> colorMap;
   extern const uint64_t colors;
 
-  Map generateBlocks(Point size);
 
   enum class SpecialType {
     PlusOneSecond,
     Shuffle,
     Hint,
+    Flash,
+    Freeze,
+    Dizzy,
   };
 
   enum class PlayerType {
     Player1,
     Player2,
   };
-  
+
   enum class GameType {
     Single,
     Contest,
   };
-  
+
   BlockPointer generateById(uint64_t);
 }// namespace link_link::block
