@@ -163,7 +163,7 @@ void link_link::LinkLink::manipulate(Key key) {
   }
 }
 void link_link::LinkLink::click(QPointF point) {
-  if (!isFlashing()) { return; }
+  if (!isFlashing() || isPaused()) { return; }
   auto position = Point{point.y() / 20, point.x() / 20};
   for (auto i: {0, -1, 1}) {
     auto j = 0;
@@ -172,6 +172,7 @@ void link_link::LinkLink::click(QPointF point) {
       players[0]->position = p;
       handleCollidedReaction(players[0], p,
                              map[p.first][p.second]->onCollided());
+      info("LinkLink: Flashing to ({}, {})", p.first, p.second);
       flashing = false;
     }
   }
@@ -183,6 +184,7 @@ void link_link::LinkLink::click(QPointF point) {
       handleCollidedReaction(
         players[0], position,
         map[position.first][position.second]->onCollided());
+      info("LinkLink: Flashing to ({}, {})", p.first, p.second);
       flashing = false;
     }
   }
@@ -659,7 +661,6 @@ void link_link::LinkLink::save(ostream &out) const {
   out << hintTimeStamp << ' ';
 
   out << isFlashing() << ' ';
-
 
 
   for (const auto &player: players) { player->save(out); }
