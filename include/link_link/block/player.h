@@ -21,6 +21,8 @@ public:
     Point position;
     uint64_t score;
     Point selectedPoint;
+    uint64_t freezedTimeStamp;
+    uint64_t dizzyedTimeStamp;
 
 public:
     void save(std::ostream &)const;

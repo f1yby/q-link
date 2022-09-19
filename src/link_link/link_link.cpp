@@ -201,23 +201,39 @@ void link_link::LinkLink::handleReaction(const Reaction &reaction,
   Reactions collidedReactions;
   Point colliding = player->position;
   Point collided;
-
+  int i;
+  int j;
   switch (reaction) {
     case Reaction::MoveLeft:
-      collided = {colliding.first, colliding.second - 1};
+      i = 0;
+      j = -1;
       break;
     case Reaction::MoveRight:
-      collided = {colliding.first, colliding.second + 1};
+      i = 0;
+      j = 1;
       break;
     case Reaction::MoveUp:
-      collided = {colliding.first - 1, colliding.second};
+      i = -1;
+      j = 0;
       break;
     case Reaction::MoveDown:
-      collided = {colliding.first + 1, colliding.second};
+      i = 1;
+      j = 0;
       break;
     default:
       return;
   }
+  if (player->dizzyedTimeStamp > gameTime) {
+    info("LinkLink: manipulation dizzyed");
+    i = -i;
+    j = -j;
+  }
+  if (player->freezedTimeStamp > gameTime) {
+    info("LinkLink: manipulation freezed");
+    i = 0;
+    j = 0;
+  }
+  collided = Point{colliding.first + i, colliding.second + j};
   info("Collision: ({}, {}) with ({}, {})", colliding.first, colliding.second,
        collided.first, collided.second);
   handleCollidedReaction(player, collided,
@@ -290,6 +306,16 @@ void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
         flashing = true;
         break;
       }
+      case Reaction::Dizzy:
+        for (auto player: players) {
+          if (player != colliding) { player->dizzyedTimeStamp = gameTime+ 10; }
+        }
+        break;
+      case Reaction::Freeze:
+        for (auto player: players) {
+          if (player != colliding) { player->freezedTimeStamp = gameTime + 10; }
+        }
+        break;
       default:
         break;
     }
@@ -615,6 +641,22 @@ void link_link::LinkLink::reset() {
   gameEndStamp = 100;
   hintTimeStamp = 0;
   paused = false;
+  players.clear();
+
+  switch (gameType) {
+    case link_link::LinkLink::GameType::Single:
+      players.push_back(
+        make_shared<Player>(Point{1, 1}, PlayerType::Player1, Point{0, 0}));
+      break;
+    case link_link::LinkLink::GameType::Contest:
+      players.push_back(
+        make_shared<Player>(Point{1, 1}, PlayerType::Player1, Point{0, 0}));
+      players.push_back(
+        make_shared<Player>(Point{1, 1}, PlayerType::Player2, Point{0, 0}));
+      break;
+    default:
+      break;
+  }
 
   for (auto &player: players) {
     player->score = 0;

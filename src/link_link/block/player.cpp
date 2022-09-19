@@ -112,14 +112,16 @@ void Player::render(QPainter &qPainter) const {
 Row Player::generate() { return {}; }
 
 Player::Player(Point position, PlayerType player, Point selectedPoint)
-    : position(std::move(position)), score(0), player(player),
-      selectedPoint(selectedPoint) {}
+    : position(std::move(position)), score(0), freezedTimeStamp(0),
+      dizzyedTimeStamp(0), player(player), selectedPoint(selectedPoint) {}
 
 uint64_t Player::id() const { return static_cast<uint64_t>(BlockType::Player); }
 
 
 void Player::save(ostream &out) const {
   out << score << ' ';
+  out << freezedTimeStamp << ' ';
+  out << dizzyedTimeStamp << ' ';
   out << position.first << ' ';
   out << position.second << ' ';
   out << selectedPoint.first << ' ';
@@ -128,6 +130,8 @@ void Player::save(ostream &out) const {
 
 void Player::load(istream &in) {
   in >> score;
+  in >> freezedTimeStamp;
+  in >> dizzyedTimeStamp;
   in >> position.first;
   in >> position.second;
   in >> selectedPoint.first;
