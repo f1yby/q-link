@@ -35,16 +35,16 @@ Reactions Player::onManipulated(Key key) const {
       break;
     case link_link::block::PlayerType::Player2:
       switch (key) {
-        case Key_Left:
+        case Key_J:
           reactions.push_back(Reaction::MoveLeft);
           break;
-        case Key_Right:
+        case Key_L:
           reactions.push_back(Reaction::MoveRight);
           break;
-        case Key_Up:
+        case Key_I:
           reactions.push_back(Reaction::MoveUp);
           break;
-        case Key_Down:
+        case Key_K:
           reactions.push_back(Reaction::MoveDown);
           break;
       }
