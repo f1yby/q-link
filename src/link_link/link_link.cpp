@@ -186,7 +186,6 @@ void link_link::LinkLink::click(QPointF point) {
       flashing = false;
     }
   }
-
 }
 void link_link::LinkLink::elapse(uint32_t second) {
   if (isGameEnd() || isPaused()) { return; }
@@ -652,6 +651,8 @@ void link_link::LinkLink::save(ostream &out) const {
 
   info("LinkLink: Saving Game Archive");
 
+  out << players.size() << ' ';
+
   out << gameTime << ' ';
 
   out << gameEndStamp << ' ';
@@ -659,7 +660,7 @@ void link_link::LinkLink::save(ostream &out) const {
 
   out << isFlashing() << ' ';
 
-  out << players.size() << ' ';
+
 
   for (const auto &player: players) { player->save(out); }
 
@@ -676,6 +677,13 @@ void link_link::LinkLink::load(istream &in) {
 
   uint64_t buffer;
 
+  in >> buffer;
+  if (buffer == 1) {
+    switchToSingle();
+  } else {
+    switchToContest();
+  }
+
   in >> gameTime;
 
   in >> gameEndStamp;
@@ -683,12 +691,7 @@ void link_link::LinkLink::load(istream &in) {
 
   in >> flashing;
 
-  in >> buffer;
-  if (buffer == 1) {
-    switchToSingle();
-  } else {
-    switchToContest();
-  }
+  paused = true;
 
   for (auto &player: players) { player->load(in); }
 
