@@ -34,7 +34,7 @@ Game::Game(QWidget *parent)
     QString filename = QFileDialog::getSaveFileName(
       nullptr, QObject::tr("Save Game"), QDir::currentPath(),
       QObject::tr("Game achive (*.ga)"));
-
+    if (filename.isEmpty()) { return; }
     ofstream out;
     out.open(filename.toStdString());
     gameEngine.save(out);
@@ -46,7 +46,9 @@ Game::Game(QWidget *parent)
       nullptr, QObject::tr("Load Game"), QDir::currentPath(),
       QObject::tr("Game achive (*.ga)"));
 
+    if (filename.isEmpty()) { return; }
     ifstream in;
+
     in.open(filename.toStdString());
     gameEngine.load(in);
     in.close();
@@ -82,7 +84,7 @@ void Game::renderNormalLayout() {
   ui->title->hide();
   ui->save->hide();
   ui->load->hide();
-             ui->exit->hide();
+  ui->exit->hide();
 
   if (gameEngine.isGameEnd()) { status = GameStatus::End; }
 }
