@@ -162,6 +162,7 @@ void link_link::LinkLink::manipulate(Key key) {
     for (auto reaction: reactions) { handleReaction(reaction, player); }
   }
 }
+
 void link_link::LinkLink::click(QPointF point) {
   if (!isFlashing() || isPaused()) { return; }
   auto position = Point{point.y() / 20, point.x() / 20};
@@ -458,7 +459,7 @@ uint64_t link_link::LinkLink::getGameTimeLeft() const {
   return gameEndStamp - gameTime;
 }
 
-bool link_link::LinkLink::isGameEnd() const { return gameTime > gameEndStamp; }
+bool link_link::LinkLink::isGameEnd() const { return gameTime >= gameEndStamp; }
 
 bool link_link::LinkLink::isHintEnd() const { return gameTime > hintTimeStamp; }
 
