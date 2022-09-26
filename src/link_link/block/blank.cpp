@@ -5,7 +5,17 @@
 using namespace link_link;
 using namespace link_link::block;
 
-Reactions Blank::onCollided() const { return {Reaction::Penetrate}; }
-void Blank::render(QPainter &qPainter) const {}
-Row Blank::generate() { return {}; }
-uint64_t Blank::id() const { return static_cast<uint64_t>(BlockType::Blank); }
+Reactions Blank::onCollided() const
+{
+    return {Reaction::Penetrate};
+}
+void Blank::render(QPainter &qPainter) const
+{}
+Row Blank::generate()
+{
+    return {};
+}
+uint64_t Blank::id() const
+{
+    return static_cast<uint64_t>(BlockType::Blank);
+}

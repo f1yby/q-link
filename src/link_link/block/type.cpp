@@ -153,23 +153,24 @@ const map<Color, QColor> link_link::block::colorMap = {
 
 const uint64_t link_link::block::colors = colorMap.size();
 
-BlockPointer link_link::block::generateById(uint64_t id) {
-  auto type = static_cast<BlockType>(id % blockType);
-  switch (type) {
-    case BlockType::Blank:
-      return make_shared<Blank>();
-      break;
-    case BlockType::Diamond:
-      return make_shared<Diamond>(id);
-      break;
-    case BlockType::Wall:
-      return make_shared<Wall>();
-      break;
-    case BlockType::Special:
-      return make_shared<Special>(id);
-      break;
-    default:
-      break;
-  }
-  return make_shared<Blank>();
+BlockPointer link_link::block::generateById(uint64_t id)
+{
+    auto type = static_cast<BlockType>(id % blockType);
+    switch (type) {
+        case BlockType::Blank:
+            return make_shared<Blank>();
+            break;
+        case BlockType::Diamond:
+            return make_shared<Diamond>(id);
+            break;
+        case BlockType::Wall:
+            return make_shared<Wall>();
+            break;
+        case BlockType::Special:
+            return make_shared<Special>(id);
+            break;
+        default:
+            break;
+    }
+    return make_shared<Blank>();
 }
