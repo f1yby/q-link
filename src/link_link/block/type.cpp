@@ -118,7 +118,7 @@ const map<Shape, QPoints> link_link::block::shapeMap{
   },
 };
 
-const uint64_t link_link::block::shapes = 1;//shapeMap.size();
+const uint64_t link_link::block::shapes = 1; // shapeMap.size();
 
 const map<Color, QColor> link_link::block::colorMap = {
   {
