@@ -1,9 +1,9 @@
-#include "main_window.h"
-#include "../link_link/link_link.h"
-#include "menu.h"
+#include "widget/main_window.h"
 #include "ui_main_window.h"
+#include "widget/menu.h"
 #include <iostream>
 #include <qwidget.h>
+
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent), ui(new Ui::MainWindow), menu(new Menu(this)),
       game(new Game(this))
@@ -48,8 +48,4 @@ void MainWindow::switchToContestGame()
 void MainWindow::switchToMenu()
 {
     switchWidget(menu);
-}
-void MainWindow::keyPressEvent(QKeyEvent *event)
-{
-    //game->keyPressEvent(event);
 }

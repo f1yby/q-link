@@ -1,8 +1,8 @@
-#include "player.h"
+#include "link_link/block/player.h"
 //
 // Created by jiarui on 8/3/22.
 //
-#include "block/type.h"
+#include "link_link/block/type.h"
 #include <iostream>
 #include <map>
 using namespace link_link;

@@ -29,8 +29,4 @@ private slots:
     void switchToSingleGame();
     void switchToContestGame();
     void switchToMenu();
-
-
-protected:
-    void keyPressEvent(QKeyEvent *event) override;
 };

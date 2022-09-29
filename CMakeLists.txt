@@ -9,12 +9,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_PLATFORM_INDEPENDENT_CODE ON)
 
-
-include(FetchContent)
-
-find_package(Qt6 REQUIRED COMPONENTS Widgets Gui)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Gui Test)
 qt_standard_project_setup()
 
+include(FetchContent)
 
 FetchContent_Declare(
   googletest
@@ -37,6 +35,14 @@ endif()
 
 
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+
+# Set Include Dir
+set(QLINK_SRC_INCLUDE_DIR
+        ${PROJECT_SOURCE_DIR}/src/include
+        )
+
+include_directories(${QLINK_SRC_INCLUDE_DIR})
+
 add_subdirectory(src)
 add_subdirectory(apps)
 add_subdirectory(test)

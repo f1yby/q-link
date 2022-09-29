@@ -1,10 +1,7 @@
-#include "widgets/main_window.h"
-#include "widgets/menu.h"
+#include "widget/main_window.h"
 #include <QApplication>
 #include <QLocale>
-#include <QPushButton>
 #include <QTranslator>
-#include <qpushbutton.h>
 #include <spdlog/spdlog.h>
 
 using namespace spdlog;

@@ -1,7 +1,7 @@
 //
 // Created by jiarui on 8/4/22.
 //
-#include "block/wall.h"
+#include "link_link/block/wall.h"
 using namespace link_link;
 using namespace link_link::block;
 Reactions Wall::onCollided() const

@@ -1,13 +1,13 @@
 //
 // Created by jiarui on 8/3/22.
 //
-#include "block/type.h"
-#include "block/blank.h"
-#include "block/block.h"
-#include "block/player.h"
-#include "block/special.h"
-#include "block/wall.h"
-#include "diamond.h"
+#include "link_link/block/type.h"
+#include "link_link/block/blank.h"
+#include "link_link/block/block.h"
+#include "link_link/block/player.h"
+#include "link_link/block/special.h"
+#include "link_link/block/wall.h"
+#include "link_link/block/diamond.h"
 #include <random>
 
 using namespace link_link::block;

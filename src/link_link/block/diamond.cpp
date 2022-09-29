@@ -1,7 +1,7 @@
 //
 // Created by jiarui on 8/3/22.
 //
-#include "block/diamond.h"
+#include "link_link/block/diamond.h"
 using namespace link_link;
 using namespace link_link::block;
 

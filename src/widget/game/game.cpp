@@ -1,4 +1,4 @@
-#include "game.h"
+#include "widget/game.h"
 #include "ui_game.h"
 #include <QFileDialog>
 #include <QKeyEvent>

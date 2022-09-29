@@ -1,11 +1,11 @@
-#include "link_link.h"
-#include "block/blank.h"
-#include "block/diamond.h"
-#include "block/path.h"
-#include "block/player.h"
-#include "block/special.h"
-#include "block/wall.h"
-#include "link_link.h"
+#include "link_link/link_link.h"
+#include "link_link/block/blank.h"
+#include "link_link/block/diamond.h"
+#include "link_link/block/path.h"
+#include "link_link/block/player.h"
+#include "link_link/block/special.h"
+#include "link_link/block/wall.h"
+
 #include <iostream>
 #include <memory>
 #include <random>

@@ -1,0 +1,5 @@
+include(Widget)
+add_subdirectory(game)
+add_subdirectory(menu)
+add_subdirectory(main_window)
+target_link_libraries(Game Menu MainWindow)

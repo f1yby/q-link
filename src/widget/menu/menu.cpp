@@ -1,4 +1,4 @@
-#include "menu.h"
+#include "widget/menu.h"
 #include "ui_menu.h"
 #include <qpushbutton.h>
 #include <qtmetamacros.h>
