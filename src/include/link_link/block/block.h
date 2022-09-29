@@ -1,6 +1,6 @@
 #pragma once
 #include "type.h"
-#include <QPainter>
+#include <QtGui/QPainter>
 namespace link_link::block {
     class Block {
     public:

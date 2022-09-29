@@ -2,11 +2,11 @@
 // Created by jiarui on 8/3/22.
 //
 #pragma once
-#include "../reaction.h"
-#include "qpainter.h"
-#include "qpoint.h"
+#include "link_link/reaction.h"
+#include <QtGui/QPainter>
 #include <map>
 #include <vector>
+#include <cstdint>
 
 namespace link_link::block {
     class Block;
