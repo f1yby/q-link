@@ -11,11 +11,13 @@ namespace link_link::block {
 
     public:
         inline bool operator==(Block &block) const
-        {return this->id() == block.id();
+        {
+            return this->id() == block.id();
+        };
+        [[nodiscard]] inline BlockType getType() const
+        {
+            return static_cast<BlockType>(id() % blockType);
+        }
     };
-    [[nodiscard]] inline BlockType getType() const {
-      return static_cast<BlockType>(id() % blockType);
-    }
-  };
 
 }// namespace link_link::block

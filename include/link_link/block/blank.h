@@ -6,8 +6,8 @@ namespace link_link ::block {
         [[nodiscard]] Reactions onCollided() const override;
         void render(QPainter &) const override;
         [[nodiscard]] uint64_t id() const override;
-        [[nodiscard]] inline bool penetratable() const
-        override {
+        [[nodiscard]] inline bool penetratable() const override
+        {
             return true;
         };
 
