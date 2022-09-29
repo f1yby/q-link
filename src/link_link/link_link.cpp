@@ -73,12 +73,10 @@ Map link_link::LinkLink::generateBlocks(Point size, GameType gameType)
     }
 
     for (auto i = diamonds - weight.size(); i > 0; -- --i) {
-        //      weight.push_back(std::make_shared<Diamond>(static_cast<Color>(i % colors),
-        //                                                 static_cast<Shape>(i % shapes)));
-        //      weight.push_back(std::make_shared<Diamond>(static_cast<Color>(i % colors),
-        //                                                 static_cast<Shape>(i % shapes)));
-        weight.push_back(std::make_shared<Blank>());
-        weight.push_back(std::make_shared<Blank>());
+        weight.push_back(std::make_shared<Diamond>(
+          static_cast<Color>(i % colors), static_cast<Shape>(i % shapes)));
+        weight.push_back(std::make_shared<Diamond>(
+          static_cast<Color>(i % colors), static_cast<Shape>(i % shapes)));
     }
 
     static random_device rd;

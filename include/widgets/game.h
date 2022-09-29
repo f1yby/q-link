@@ -42,28 +42,12 @@ public:
 
     void reset();
 
-<<<<<<< HEAD
-
-public:
-    void save();
-    void load();
-
-
-    enum class GameStatus{
-      Normal,
-      Paused,
-      End,
-    };
-=======
-
 public:
     enum class GameStatus {
         Normal,
         Paused,
         End,
     };
->>>>>>> 18a6fc0 (add solvable check)
-
 private:
     GameStatus status;
     link_link::LinkLink gameEngine;

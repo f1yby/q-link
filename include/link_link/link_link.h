@@ -44,53 +44,24 @@ namespace link_link {
                                     block::Point &collided,
                                     const Reactions &reactions);
 
-<<<<<<< HEAD
-
-    private:
-        block::Points genLinkablePath(block::Line) const;
-        bool checkLinePenetratable(block::Line) const;
-        static block::Points genPenetratableLine(block::Line);
-        block::Points findLinkedPair() const;
-        bool checkPathable(block::Line) const;
-=======
-
     private:
         [[nodiscard]] block::Points genLinkablePath(block::Line) const;
         [[nodiscard]] bool checkLinePenetratable(block::Line) const;
         static block::Points genPenetratableLine(block::Line);
         [[nodiscard]] block::Points findLinkedPair() const;
         [[nodiscard]] bool checkPathable(block::Line) const;
->>>>>>> 18a6fc0 (add solvable check)
 
     private:
         uint64_t gameTime;
 
         uint64_t gameEndStamp;
         uint64_t hintTimeStamp;
-
-<<<<<<< HEAD
-        bool isHintEnd() const;
-
-        bool isP1Freeze() const;
-        bool isP2Freeze() const;
-
-        bool isP1Dizzy() const;
-        bool isP2Dizzy() const;
-
-        bool paused;
-        bool isPaused() const;
-
-        bool flashing;
-        bool isFlashing() const;
-
-        uint64_t getGameTime() const;
-
-    public:
-        uint64_t getGameTimeLeft() const;
-=======
         [[nodiscard]] bool isHintEnd() const;
+
         bool paused;
         [[nodiscard]] bool isPaused() const;
+
+
 
         bool flashing;
         [[nodiscard]] bool isFlashing() const;
@@ -106,13 +77,6 @@ namespace link_link {
         [[nodiscard]] bool isGameEnd() const;
         [[nodiscard]] bool isGameSolvable() const;
         void togglePaused();
->>>>>>> 18a6fc0 (add solvable check)
-
-        uint64_t getP1Score() const;
-        uint64_t getP2Score() const;
-
-        bool isGameEnd() const;
-        void togglePaused();
 
         void switchToSingle();
         void switchToContest();
@@ -122,5 +86,6 @@ namespace link_link {
     public:
         void save(std::ostream &) const;
         void load(std::istream &);
+
     };
 }// namespace link_link
