@@ -507,7 +507,7 @@ uint64_t link_link::LinkLink::getGameTimeLeft() const
 
 bool link_link::LinkLink::isGameEnd() const
 {
-    return !isGameSolvable() && gameTime >= gameEndStamp;
+    return !isGameSolvable() || gameTime >= gameEndStamp;
 }
 
 bool link_link::LinkLink::isGameSolvable() const
