@@ -140,8 +140,10 @@ private slots:
            make_shared<Wall>(), make_shared<Wall>(), make_shared<Wall>()},
           {make_shared<Wall>(), make_shared<Blank>(), make_shared<Blank>(),
            make_shared<Blank>(), make_shared<Blank>(), make_shared<Wall>()},
-          {make_shared<Wall>(), make_shared<Blank>(), make_shared<Diamond>(Color::Red, Shape::Square),
-           make_shared<Diamond>(Color::Red, Shape::Square),make_shared<Blank>(), make_shared<Wall>()},
+          {make_shared<Wall>(), make_shared<Blank>(),
+           make_shared<Diamond>(Color::Red, Shape::Square),
+           make_shared<Diamond>(Color::Red, Shape::Square),
+           make_shared<Blank>(), make_shared<Wall>()},
           {make_shared<Wall>(), make_shared<Blank>(), make_shared<Blank>(),
            make_shared<Blank>(), make_shared<Blank>(), make_shared<Wall>()},
           {make_shared<Wall>(), make_shared<Blank>(), make_shared<Blank>(),
@@ -154,6 +156,57 @@ private slots:
         engine.manipulate(Qt::Key_D);
         engine.manipulate(Qt::Key_S);
         QVERIFY(engine.getP1Score() == 1);
+
+
+        engine.reset();
+        engine.switchToContest();
+        engine.set_map({
+          {make_shared<Wall>(), make_shared<Wall>(), make_shared<Wall>(),
+           make_shared<Wall>(), make_shared<Wall>(), make_shared<Wall>()},
+          {make_shared<Wall>(), make_shared<Blank>(), make_shared<Blank>(),
+           make_shared<Blank>(), make_shared<Blank>(), make_shared<Wall>()},
+          {make_shared<Wall>(), make_shared<Blank>(),
+           make_shared<Diamond>(Color::Red, Shape::Square),
+           make_shared<Diamond>(Color::Red, Shape::Square),
+           make_shared<Blank>(), make_shared<Wall>()},
+          {make_shared<Wall>(), make_shared<Blank>(), make_shared<Blank>(),
+           make_shared<Blank>(), make_shared<Blank>(), make_shared<Wall>()},
+          {make_shared<Wall>(), make_shared<Blank>(), make_shared<Blank>(),
+           make_shared<Blank>(), make_shared<Blank>(), make_shared<Wall>()},
+          {make_shared<Wall>(), make_shared<Wall>(), make_shared<Wall>(),
+           make_shared<Wall>(), make_shared<Wall>(), make_shared<Wall>()},
+        });
+        engine.manipulate(Qt::Key_D);
+        engine.manipulate(Qt::Key_S);
+        engine.manipulate(Qt::Key_D);
+        engine.manipulate(Qt::Key_S);
+        QVERIFY(engine.getP1Score() == 1);
+        QVERIFY(engine.getP2Score() == 0);
+
+        engine.reset();
+        engine.switchToContest();
+        engine.set_map({
+          {make_shared<Wall>(), make_shared<Wall>(), make_shared<Wall>(),
+           make_shared<Wall>(), make_shared<Wall>(), make_shared<Wall>()},
+          {make_shared<Wall>(), make_shared<Blank>(), make_shared<Blank>(),
+           make_shared<Blank>(), make_shared<Blank>(), make_shared<Wall>()},
+          {make_shared<Wall>(), make_shared<Blank>(),
+           make_shared<Diamond>(Color::Red, Shape::Square),
+           make_shared<Diamond>(Color::Red, Shape::Square),
+           make_shared<Blank>(), make_shared<Wall>()},
+          {make_shared<Wall>(), make_shared<Blank>(), make_shared<Blank>(),
+           make_shared<Blank>(), make_shared<Blank>(), make_shared<Wall>()},
+          {make_shared<Wall>(), make_shared<Blank>(), make_shared<Blank>(),
+           make_shared<Blank>(), make_shared<Blank>(), make_shared<Wall>()},
+          {make_shared<Wall>(), make_shared<Wall>(), make_shared<Wall>(),
+           make_shared<Wall>(), make_shared<Wall>(), make_shared<Wall>()},
+        });
+        engine.manipulate(Qt::Key_L);
+        engine.manipulate(Qt::Key_K);
+        engine.manipulate(Qt::Key_L);
+        engine.manipulate(Qt::Key_K);
+        QVERIFY(engine.getP1Score() == 0);
+        QVERIFY(engine.getP2Score() == 1);
     }
 
 public:
