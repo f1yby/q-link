@@ -31,6 +31,7 @@ namespace link_link {
         block::Points linkedPath;
         block::Points hintedPoints;
         GameType gameType;
+        bool changed;
 
     public:
         void manipulate(Qt::Key key);
@@ -45,10 +46,15 @@ namespace link_link {
                                     const Reactions &reactions);
 
     private:
+        // Generate the linkable pair
         [[nodiscard]] block::Points genLinkablePath(block::Line) const;
+        // Check if any blocks exists in a strait line.
         [[nodiscard]] bool checkLinePenetratable(block::Line) const;
+        // Generate a line of all penetratable blocks.
         static block::Points genPenetratableLine(block::Line);
+        // Find a pair of blocks that can be linked
         [[nodiscard]] block::Points findLinkedPair() const;
+        // Check if user can reach the position
         [[nodiscard]] bool checkPathable(block::Line) const;
 
     private:
@@ -74,14 +80,16 @@ namespace link_link {
         [[nodiscard]] uint64_t getP1Score() const;
         [[nodiscard]] uint64_t getP2Score() const;
 
-        [[nodiscard]] bool isGameEnd() const;
-        [[nodiscard]] bool isGameSolvable() const;
+        [[nodiscard]] bool isGameEnd();
+        [[nodiscard]] bool isGameSolvable();
         void togglePaused();
 
         void switchToSingle();
         void switchToContest();
 
         void reset();
+
+        void set_map(block::Map map);
 
     public:
         void save(std::ostream &) const;

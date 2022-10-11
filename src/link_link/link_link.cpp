@@ -11,6 +11,7 @@
 #include <random>
 #include <set>
 #include <spdlog/spdlog.h>
+#include <utility>
 using namespace link_link::block;
 using namespace link_link;
 using namespace std;
@@ -28,7 +29,7 @@ link_link::LinkLink::LinkLink()
         make_shared<Player>(Point{1, 1}, PlayerType::Player1, Point{0, 0}),
       }),
       linkedPath(), gameTime(0), gameEndStamp(100), hintTimeStamp(0),
-      paused(false), flashing(false), gameType(GameType::Single)
+      paused(false), flashing(false), gameType(GameType::Single), changed(true)
 {}
 
 Map link_link::LinkLink::generateBlocks(Point size, GameType gameType)
@@ -285,6 +286,7 @@ void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
                             hintedPoints = findLinkedPair();
                         }
                         selectedBlock = {0, 0};
+                        changed = true;
                         break;
                     }
                 }
@@ -294,6 +296,7 @@ void LinkLink::handleCollidedReaction(PlayerPointer &colliding, Point &collided,
             case Reaction::ReplaceWithBlank:
                 map[collided.first][collided.second] =
                   BlockPointer(make_shared<Blank>());
+                changed = true;
                 break;
             case Reaction::PlusOneSecond:
                 gameEndStamp += 30;
@@ -505,44 +508,93 @@ uint64_t link_link::LinkLink::getGameTimeLeft() const
     return gameEndStamp - gameTime;
 }
 
-bool link_link::LinkLink::isGameEnd() const
+bool link_link::LinkLink::isGameEnd()
 {
     return !isGameSolvable() || gameTime >= gameEndStamp;
 }
 
 // Check if the game is still solvable
-bool link_link::LinkLink::isGameSolvable() const
+bool link_link::LinkLink::isGameSolvable()
 {
-    auto row = map.size();
-    if (row == 0) {
-        return false;
-    }
-    auto col = map[0].size();
-    for (auto i = 1; i < row - 1; ++i) {
-        for (auto j = 1; j < col - 1; ++j) {
-            for (auto ii = 1; ii < row - 1; ++ii) {
-                for (auto jj = 1; jj < col - 1; ++jj) {
-                    auto left = map[i][j];
-                    auto right = map[ii][jj];
-                    if (left == right) {
-                        continue;
-                    }
-                    if (left->getType() != BlockType::Diamond) {
-                        continue;
-                    }
-                    // User can't reach the block
-                    if (!checkPathable({{1, 1}, {i, j}}) ||
-                        !checkPathable({{1, 1}, {ii, jj}})) {
-                        continue;
-                    }
-                    if (!genLinkablePath({{i, j}, {ii, jj}}).empty()) {
-                        return true;
+    static bool solvable = true;
+    if (changed) {
+        changed = false;
+        auto row = map.size();
+        if (row == 0) {
+            return false;
+        }
+        auto col = map[0].size();
+        for (auto i = 1; i < row - 1; ++i) {
+            for (auto j = 1; j < col - 1; ++j) {
+                for (auto ii = 1; ii < row - 1; ++ii) {
+                    for (auto jj = 1; jj < col - 1; ++jj) {
+                        auto left = map[i][j];
+                        auto right = map[ii][jj];
+                        if (left == right) {
+                            continue;
+                        }
+                        if (left->getType() == BlockType::Diamond &&
+                            left->id() == right->id()) {
+                            if (!genLinkablePath({{i, j}, {ii, jj}}).empty()) {
+                                // User can reach the block
+                                bool left_reachable = false;
+                                auto position = Point{i, j};
+                                for (auto iii: {0, -1, 1}) {
+                                    auto jjj = 0;
+                                    auto p = Point{position.first + iii,
+                                                   position.second + jjj};
+                                    if (checkPathable({players[0]->position, p})) {
+                                        left_reachable = true;
+                                    }
+                                }
+                                for (auto jjj: {-1, 1}) {
+                                    auto iii = 0;
+                                    auto p = Point{position.first + iii,
+                                                   position.second + jjj};
+                                    if (checkPathable({players[0]->position, p})) {
+                                        left_reachable = true;
+                                    }
+                                }
+                                if (!left_reachable) {
+                                    continue;
+                                }
+                                solvable = true;
+                                return true;
+                            }
+                        } else if (left->getType() == BlockType::Special) {
+                            //User can get special block
+                            bool left_reachable = false;
+                            auto position = Point{i, j};
+                            for (auto iii: {0, -1, 1}) {
+                                auto jjj = 0;
+                                auto p = Point{position.first + iii,
+                                               position.second + jjj};
+                                if (checkPathable({players[0]->position, p})) {
+                                    left_reachable = true;
+                                }
+                            }
+                            for (auto jjj: {-1, 1}) {
+                                auto iii = 0;
+                                auto p = Point{position.first + iii,
+                                               position.second + jjj};
+                                if (checkPathable({players[0]->position, p})) {
+                                    left_reachable = true;
+                                }
+                            }
+                            if (!left_reachable) {
+                                continue;
+                            }
+                            solvable = true;
+                            return true;
+                        }
                     }
                 }
             }
         }
+        solvable = false;
+        return false;
     }
-    return false;
+    return solvable;
 }
 
 bool link_link::LinkLink::isHintEnd() const
@@ -898,4 +950,8 @@ void link_link::LinkLink::load(istream &in)
     }
 
     linkedPath.clear();
+}
+void LinkLink::set_map(block::Map m)
+{
+    map = std::move(m);
 }
