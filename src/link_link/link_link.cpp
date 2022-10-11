@@ -510,6 +510,7 @@ bool link_link::LinkLink::isGameEnd() const
     return !isGameSolvable() || gameTime >= gameEndStamp;
 }
 
+// Check if the game is still solvable
 bool link_link::LinkLink::isGameSolvable() const
 {
     auto row = map.size();
@@ -527,6 +528,11 @@ bool link_link::LinkLink::isGameSolvable() const
                         continue;
                     }
                     if (left->getType() != BlockType::Diamond) {
+                        continue;
+                    }
+                    // User can't reach the block
+                    if (!checkPathable({{1, 1}, {i, j}}) ||
+                        !checkPathable({{1, 1}, {ii, jj}})) {
                         continue;
                     }
                     if (!genLinkablePath({{i, j}, {ii, jj}}).empty()) {
@@ -562,6 +568,7 @@ static inline bool isDiamond(uint64_t id)
     return false;
 }
 
+// Check if 2 blocks can be linked
 Points link_link::LinkLink::findLinkedPair() const
 {
 
@@ -707,6 +714,7 @@ Points link_link::LinkLink::findLinkedPair() const
 
     return {};
 }
+
 // check if player can reach the block
 bool link_link::LinkLink::checkPathable(block::Line line) const
 {
