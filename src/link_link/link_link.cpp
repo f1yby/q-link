@@ -543,7 +543,8 @@ bool link_link::LinkLink::isGameSolvable()
                                     auto jjj = 0;
                                     auto p = Point{position.first + iii,
                                                    position.second + jjj};
-                                    if (checkPathable({players[0]->position, p})) {
+                                    if (checkPathable(
+                                          {players[0]->position, p})) {
                                         left_reachable = true;
                                     }
                                 }
@@ -551,7 +552,8 @@ bool link_link::LinkLink::isGameSolvable()
                                     auto iii = 0;
                                     auto p = Point{position.first + iii,
                                                    position.second + jjj};
-                                    if (checkPathable({players[0]->position, p})) {
+                                    if (checkPathable(
+                                          {players[0]->position, p})) {
                                         left_reachable = true;
                                     }
                                 }
@@ -681,7 +683,7 @@ Points link_link::LinkLink::findLinkedPair() const
     }
 
     //From up to down
-    for (auto j = 0; j < map[0].size();) {
+    for (auto j = 0; j < map[0].size(); ++j) {
         for (auto i = 0; i < map.size(); ++i) {
             if (map[i][j]->id() != static_cast<uint64_t>(BlockType::Blank)) {
                 continue;
@@ -954,4 +956,5 @@ void link_link::LinkLink::load(istream &in)
 void LinkLink::set_map(block::Map m)
 {
     map = std::move(m);
+    changed = true;
 }
